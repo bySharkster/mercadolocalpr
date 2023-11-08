@@ -61,6 +61,13 @@ export const NavMenu = () => {
             </button>
           </div>
           <NavLinks setIsOpen={setIsOpen} isOpen={isOpen} />
+          <Link
+            href={"/login"}
+            onClick={() => setIsLoggedIn(true)}
+            className="flex btn-custom md:hidden"
+          >
+            Sign in/ Sign up
+          </Link>
         </div>
       ) : null}
     </>

@@ -4,7 +4,7 @@ import { NavMenu } from "./NavMenu";
 
 export const Navbar = () => {
 
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   return (
     <div className="bg-[#E1EFE6] navbar justify-between">
@@ -56,18 +56,30 @@ export const Navbar = () => {
             </label>
             <ul
               tabIndex={0}
-              className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52"
+              className="dropdown-content z-[1] menu p-2 shadow custom-style rounded-box w-52"
             >
               <li>
-                <a>Item 1</a>
+                <span>Crear publicacion</span>
               </li>
               <li>
-                <a>Item 2</a>
+                <Link href={'/user/settings'}>Settings</Link>
+              </li>
+              <li>
+                <button
+                  className="btn-custom-right"
+                  onClick={() => setIsLoggedIn(false)}
+                >
+                  Log out
+                </button>
               </li>
             </ul>
           </button>
         ) : (
-          <Link href={"/login"} className="btn-custom">
+          <Link
+            href={"/login"}
+            onClick={() => setIsLoggedIn(true)}
+            className="btn-custom"
+          >
             Sign in/ Sign up
           </Link>
         )}

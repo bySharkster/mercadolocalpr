@@ -2,17 +2,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { ImageResp } from "../ImageResp/ImageResp";
-import { getExampleTable } from "../../../db/simple-connect";
-
 export const Hero = () => {
     const date = new Date();
     const currentHour = date.getHours();
     const [greetings, setGreetings] = useState("Good afternoon!");
-
-    useEffect(() => {
-      getExampleTable();
-    }
-    , []);
     
     useEffect(() => {
       const getGreetings = () => {
