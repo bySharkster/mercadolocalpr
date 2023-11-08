@@ -17,7 +17,7 @@ export const Navbar = () => {
         </Link>
       </div>
       <div>
-        <NavMenu />
+        <NavMenu isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn}/>
       </div>
       <div className="hidden gap-2 md:flex">
         <button className="btn-custom">

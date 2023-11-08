@@ -2,9 +2,18 @@ import Link from "next/link";
 import { NavLinks } from "./NavLinks";
 import { useState } from "react";
 
-export const NavMenu = () => {
+export const NavMenu = ({isLoggedIn, setIsLoggedIn}) => {
   const [isOpen, setIsOpen] = useState(false);
 
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    setIsOpen(false);
+  }
+  
+  const handleLogin = () => {
+    setIsLoggedIn(true);
+    setIsOpen(false);
+  }
 
   return (
     <>
@@ -61,13 +70,23 @@ export const NavMenu = () => {
             </button>
           </div>
           <NavLinks setIsOpen={setIsOpen} isOpen={isOpen} />
-          <Link
-            href={"/login"}
-            onClick={() => setIsLoggedIn(true)}
-            className="flex btn-custom md:hidden"
-          >
-            Sign in/ Sign up
-          </Link>
+          {isLoggedIn ? (
+            <Link
+              href={"/"}
+              className="btn-custom-right"
+              onClick={handleLogout}
+            >
+              Log out
+            </Link>
+          ) : (
+            <Link
+              href={"/login"}
+              onClick={handleLogin}
+              className="flex btn-custom md:hidden"
+            >
+              Sign in/ Sign up
+            </Link>
+          )}
         </div>
       ) : null}
     </>
