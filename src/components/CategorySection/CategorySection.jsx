@@ -46,7 +46,7 @@ export const CategorySection = () => {
       <div className="grid justify-between grid-cols-2 gap-12 my-24 justify-items-center md:gap-10 md:flex md:flex-wrap">
         {categories.map((category) => (
           <Link key={category.id} href={`/category/${category.category}`}>
-            <div className="grid items-center justify-center w-32 h-48 p-10 bg-white md:w-48 md:h-48 rounded-2xl">
+            <div className="grid items-center justify-center w-32 h-48 p-10 bg-white border-2 border-black md:w-48 md:h-48 rounded-2xl" style={{boxShadow: "0px 5px 0px #000"}}>
               <div className="flex items-center justify-center">
                 <img
                   src={category.icon}
@@ -54,7 +54,7 @@ export const CategorySection = () => {
                   className="w-20 h-20 bg-white cat-img rounded-2xl"
                 />
               </div>
-              <span className="text-xl font-bold text-center text-black">
+              <span className="font-bold text-center text-black text-md md:text-xl">
                 {category.category}
               </span>
             </div>

@@ -31,21 +31,7 @@ export default function About() {
               <div className="flex justify-around">
                 <div>
                   <h1>Greg</h1>
-                  <p>Software Engineer</p>
-                </div>
-                <div>
-                  <h1>787-000-0000</h1>
-                  <p>San Juan</p>
-                </div>
-              </div>
-              <div className="flex justify-around my-10">
-                <div>
-                  <h1>Fernan</h1>
-                  <p>Backend Engineer</p>
-                </div>
-                <div>
-                  <h1>787-000-0000</h1>
-                  <p>Arecibo</p>
+                  <p>Full Stack Engineer</p>
                 </div>
               </div>
             </div>
