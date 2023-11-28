@@ -1,11 +1,12 @@
-import { sql } from "@vercel/postgres";
+import { neon } from "@neondatabase/serverless";
 
-export default async function handler(request, response) {
-  try {
-    const result =
-      await sql`CREATE TABLE Pets ( Name varchar(255), Owner varchar(255) );`;
-    return response.status(200).json({ result });
-  } catch (error) {
-    return response.status(500).json({ error });
-  }
+const sql = neon(process.env.DATABASE_URL);
+
+export default async function handler(req, res) {
+  const response = await sql`SELECT version()`;
+  console.log(response);
+
+  res.status(200).json({
+    data: response,
+  });
 }

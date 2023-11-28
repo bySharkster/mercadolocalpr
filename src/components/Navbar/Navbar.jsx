@@ -37,7 +37,7 @@ export const Navbar = () => {
           </svg>
         </button>
         {isLoggedIn ? (
-          <button className="btn-custom dropdown dropdown-left dropdown-hover">
+          <Link href={"/profile"} className="btn-custom dropdown dropdown-left dropdown-hover">
             <label tabIndex={0}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -73,7 +73,7 @@ export const Navbar = () => {
                 </button>
               </li>
             </ul>
-          </button>
+          </Link>
         ) : (
           <Link
             href={"/login"}
