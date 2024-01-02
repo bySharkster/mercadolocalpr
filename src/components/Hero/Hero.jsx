@@ -59,28 +59,31 @@ export const Hero = () => {
         },
       ];
 
-    useEffect(() => { 
-      fetch("/api/table")
-        .then((res) => res.json())
-        .then((data) => console.log(data));
-    }, []);
+    // useEffect(() => { 
+    //   fetch("/api/table")
+    //     .then((res) => res.json())
+    //     .then((data) => console.log(data));
+    // }, []);
 
     return (
       <div className="min-h-screen bg-[#E1EFE6] flex items-center justify-center">
-        <div className="grid text-start lg:flex justify-center items-center bg-[#EFCB68] rounded-2xl w-[100rem] h-[32rem] md:h-[50rem] xl:h-[35rem] px-10 mx-10">
-          <div className="p-5 text-black rounded-2xl">
+        <div className="grid text-start lg:flex justify-center items-center bg-[#EFCB68] rounded-2xl w-[100vw] lg:w-[100rem] h-[32rem] md:h-[50rem] xl:h-[35rem] px-10 mx-10">
+          <div
+            className="p-5 text-black rounded-2xl"
+            style={{ width: "inherit" }}
+          >
             {/* <h1 className="text-2xl font-medium greeting">Wepa {greetings}</h1> */}
-            <h1 className="text-6xl font-bold greeting">
+            <h1 className="text-5xl font-bold lg:text-6xl greeting">
               Encuentra lo que necesites aqui.
             </h1>
             <div className="flex items-center justify-center w-full p-4 my-5 bg-white rounded-full">
               <input
-                className="w-full text-xl text-black bg-white active:outline-none focus:outline-none"
+                className="w-full text-sm text-black bg-white lg:text-xl active:outline-none focus:outline-none"
                 placeholder="empieza a buscar"
               />
               <div className="divider divider-horizontal" />
               <div className="flex items-center justify-center gap-10">
-                <div className="flex justify-between">
+                <div className="flex items-center justify-between text-sm lg:text-xl">
                   <div>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -111,7 +114,7 @@ export const Hero = () => {
                     viewBox="0 0 24 24"
                     strokeWidth={1.5}
                     stroke="currentColor"
-                    className="w-6 h-6"
+                    className="w-4 h-4 lg:w-6 lg:h-6"
                   >
                     <path
                       strokeLinecap="round"
@@ -122,7 +125,7 @@ export const Hero = () => {
                 </div>
               </div>
             </div>
-            <div className="flex gap-10">
+            <div className="flex gap-10 overflow-auto">
               {categories.map((category) => (
                 <Link key={category.id} href={`/category/${category.category}`}>
                   <div className="grid items-center justify-center">
