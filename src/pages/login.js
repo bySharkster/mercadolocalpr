@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import axios from "axios";
 import { useSession, signIn, signOut } from "next-auth/react";
 
@@ -10,7 +10,7 @@ export default function Login() {
   const [newUser, setNewUser] = useState(false);
 
   function handleSubmit() {
-    if (newUser) {
+    // if (newUser) {
       axios
         .post("/api/signup", {
           name: name,
@@ -20,16 +20,16 @@ export default function Login() {
         .then((res) => {
           console.log(res);
         });
-    } else {
-      axios
-        .post("/api/login", {
-          email: email,
-          password: password,
-        })
-        .then((res) => {
-          console.log(res);
-        });
-    }
+    // } else {
+    //   axios
+    //     .post("/api/login", {
+    //       email: email,
+    //       password: password,
+    //     })
+    //     .then((res) => {
+    //       console.log(res);
+    //     });
+  // }
 
     console.log("submitted");
   }
@@ -133,7 +133,7 @@ export default function Login() {
                     name="password"
                     value={password}
                   />
-                  <button className="oauthButton" type="submit">
+                  <button className="oauthButton" onClick={handleSubmit}>
                     Continue
                     <svg
                       className="icon"

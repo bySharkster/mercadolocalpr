@@ -6,10 +6,7 @@ import { CiHeart } from "react-icons/ci";
 import { CiUser } from "react-icons/ci";
 import { NavLinks } from "./NavLinks";
 
-export const Navbar = () => {
-
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
+export const Navbar = ({session}) => {
   return (
     <nav className="bg-[#3A4F41]">
       <div className="justify-between p-6 navbar">
@@ -45,31 +42,17 @@ export const Navbar = () => {
           </button>
         </div>
         <div className="flex gap-2 justify-evenly"></div>
-        <div className="hidden gap-2 md:flex">
-          <CiFacebook size={"4vh"} color="white" />
-          <CiInstagram size={"4vh"} color="white" />
-          <CiHeart size={"4vh"} color="white" />
-          <CiUser size={"4vh"} color="white" />
-          {isLoggedIn ? (
+        {session ? (
+          <div className="hidden gap-2 md:flex">
+            <CiFacebook size={"4vh"} color="white" />
+            <CiInstagram size={"4vh"} color="white" />
+            <CiHeart size={"4vh"} color="white" />
             <Link
               href={"/profile"}
               className="dropdown dropdown-left dropdown-hover"
             >
               <label tabIndex={0}>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="w-6 h-6"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"
-                  />
-                </svg>
+                <CiUser size={"4vh"} color="white" />
               </label>
               <ul
                 tabIndex={0}
@@ -88,8 +71,19 @@ export const Navbar = () => {
                 </li>
               </ul>
             </Link>
-          ) : null}
-        </div>
+          </div>
+        ) : (
+          <div>
+            <Link href={"/login"}>
+              <button className="btn-23">
+                <span className="text">Login</span>
+                <span aria-hidden="" className="marquee">
+                  Login Signup
+                </span>
+              </button>
+            </Link>
+          </div>
+        )}
       </div>
       <div className="p-3 bg-white ">
         <NavLinks />
@@ -100,9 +94,11 @@ export const Navbar = () => {
           <span className="text-white">© 2021</span>
         </div>
         <div>
-          <a href="#" className="text-white">Conviertace en vendedor</a>
+          <a href="#" className="text-white">
+            Conviertace en vendedor
+          </a>
         </div>
-        </div>
+      </div>
     </nav>
   );
 }

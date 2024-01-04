@@ -6,6 +6,7 @@ const prisma = new PrismaClient();
 
 export default async function handler(req, res) {
   if (req.method === "POST") {
+    console.log("POST");
     await createUserHandler(req, res);
   } else {
     return res.status(405).json({ message: "Method not allowed." });
