@@ -6,7 +6,7 @@ export const Hero = () => {
           <div className="w-[50vw] h-[25vh] bg-white p-3 rounded-lg shadow-xl border-2 border-gray-300"></div>
           <div className="w-[50vw] h-[25vh] bg-white p-3 rounded-lg shadow-xl border-2 border-gray-300"></div>
         </div>
-        <div className="flex justify-between gap-10 p-10">
+        <div className="grid gap-10 p-10 md:flex md:justify-between">
           <div className="w-[25vw] h-[25vh] bg-white p-3 rounded-lg shadow-xl border-2 border-gray-300"></div>
           <div className="w-[25vw] h-[25vh] bg-white p-3 rounded-lg shadow-xl border-2 border-gray-300"></div>
           <div className="w-[25vw] h-[25vh] bg-white p-3 rounded-lg shadow-xl border-2 border-gray-300"></div>

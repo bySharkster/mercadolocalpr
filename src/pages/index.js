@@ -20,7 +20,7 @@ export default function Home() {
         <div className="text-center">
           <h1 className="p-5 text-4xl text-white">Promocionados</h1>
         </div>
-        <div className="flex justify-around">
+        <div className="flex justify-around overflow-x-auto">
           <div className="p-10 bg-white h-[10vh] w-[10vw] rounded-lg shadow-xl shadow-white border-2 border-slate-200"></div>
           <div className="p-10 bg-white h-[10vh] w-[10vw] rounded-lg shadow-xl shadow-white border-2 border-slate-200"></div>
           <div className="p-10 bg-white h-[10vh] w-[10vw] rounded-lg shadow-xl shadow-white border-2 border-slate-200"></div>
