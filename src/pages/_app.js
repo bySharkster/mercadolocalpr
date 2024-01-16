@@ -2,16 +2,16 @@ import { Layout } from "../components/Layout/Layout";
 import "../styles/globals.css";
 import { DefaultSeo } from "next-seo";
 import SEO from "../../next-seo.config";
-// import { SessionProvider } from "next-auth/react";
+import SupabaseProvider from "../../supabase-provider";
 
 function MyApp({ Component, pageProps: { ...pageProps } }) {
   return (
-    // <SessionProvider session={session}>
-      <Layout>
-        <DefaultSeo {...SEO} />
-        <Component {...pageProps} />
-      </Layout>
-    // {/* </SessionProvider> */}
+      <SupabaseProvider>
+        <Layout>
+          <DefaultSeo {...SEO} />
+          <Component {...pageProps} />
+        </Layout>
+      </SupabaseProvider>
   );
 }
 
