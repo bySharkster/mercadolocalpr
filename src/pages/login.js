@@ -20,7 +20,7 @@ export default function Login() {
       },
     })
     if (error) console.error('Error signing up:', error.message)
-    else router.refresh()
+    else router.reload()
   }
 
   const handleSignIn = async () => {
@@ -29,27 +29,49 @@ export default function Login() {
       password,
     })
     if (error) console.error('Error signing in:', error.message)
-    else router.refresh()
+    else router.reload()
   }
 
   const handleSignOut = async () => {
     const { error } = await supabase.auth.signOut()
     if (error) console.error('Error signing out:', error.message)
-    else router.refresh()
+    else router.reload()
   }
 
   return (
-    <>
-      <input name="email" onChange={(e) => setEmail(e.target.value)} value={email} />
-      <input
-        type="password"
-        name="password"
-        onChange={(e) => setPassword(e.target.value)}
-        value={password}
-      />
-      <button onClick={handleSignUp}>Sign up</button>
-      <button onClick={handleSignIn}>Sign in</button>
-      <button onClick={handleSignOut}>Sign out</button>
-    </>
-  )
+    <div className="min-h-screen bg-black">
+      <form className="grid p-5 m-10 bg-white rounded-md" onSubmit={handleSignIn}>
+        <label className="text-3xl font-bold text-black" htmlFor="email">
+          Email
+        </label>
+        <input
+          className="text-black bg-white border-2 rounded-md"
+          name="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <label className="text-3xl font-bold text-black" htmlFor="password">
+          Password
+        </label>
+        <input
+          className="text-black bg-white border-2 rounded-md"
+          type="password"
+          name="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        <div className="grid gap-4 py-4">
+          <button type="submit" className="btn">
+            Sign In
+          </button>
+          <button type="button" className="btn" onClick={handleSignUp}>
+            Sign Up
+          </button>
+          <button type="button" className="btn" onClick={handleSignOut}>
+            Sign Out
+          </button>
+        </div>
+      </form>
+    </div>
+  );
 }

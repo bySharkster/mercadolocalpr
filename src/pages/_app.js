@@ -2,16 +2,16 @@ import { Layout } from "../components/Layout/Layout";
 import "../styles/globals.css";
 import { DefaultSeo } from "next-seo";
 import SEO from "../../next-seo.config";
-import { SessionProvider } from "next-auth/react";
+// import { SessionProvider } from "next-auth/react";
 
-function MyApp({ Component, pageProps: { session, ...pageProps } }) {
+function MyApp({ Component, pageProps: { ...pageProps } }) {
   return (
-    <SessionProvider session={session}>
+    // <SessionProvider session={session}>
       <Layout>
         <DefaultSeo {...SEO} />
         <Component {...pageProps} />
       </Layout>
-    </SessionProvider>
+    // {/* </SessionProvider> */}
   );
 }
 

@@ -1,10 +1,11 @@
 import { Navbar } from "../Navbar/Navbar";
 import { Footer } from "../Footer/Footer";
 import Head from "next/head";
-import { useSession } from "next-auth/react";
+// import { useSession } from "next-auth/react";
 
 export const Layout = ({ children }) => {
-    const { data: session } = useSession();
+    // const { data: session } = useSession();
+    const session = null;
     return (
         <div>
         <Head>
