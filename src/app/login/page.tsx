@@ -24,6 +24,7 @@ export default function Login() {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const [newUser, setNewUser] = useState(false);
+  const [userData, setUserData] = useState(null);
   // const router = useRouter();
 
   // const handleSignUp = async () => {
@@ -65,33 +66,45 @@ export default function Login() {
       password: 'greg_123',
     })
     if (error) console.log(error)
-    else console.log(data)
+    else {
+      setUserData(data)
+      console.log(data)
+    }
   }
   
 
   return (
-    <div className="flex flex-col p-10 m-10 bg-white rounded-md">
-      <button className="btn" onClick={LogIn}>Log In</button>
-      <button className="btn" onClick={LogOut}>Log Out</button>
-      {/* <InfoTest/> */}
-      <Auth
-        supabaseClient={supabaseClient}
-        providers={["github"]}
-        redirectTo={`${getURL()}/auth/callback/route`}
-        magicLink={true}
-        appearance={{
-          theme: ThemeSupa,
-          variables: {
-            default: {
-              colors: {
-                brand: "#404040",
-                brandAccent: "#52525b",
+ <div className="flex flex-col p-10 m-10 bg-white rounded-md">
+    {userData ? (
+      // Render this if the user is authenticated
+      <div>
+        <h1>Welcome!</h1>
+        <button className="btn" onClick={LogOut}>Log Out</button>
+      </div>
+    ) : (
+      // Render this if the user is not authenticated
+      <>
+        <button className="btn" onClick={LogIn}>Sign in</button>
+        <Auth
+          supabaseClient={supabaseClient}
+          providers={["github"]}
+          redirectTo={`${getURL()}/auth/callback/route`}
+          magicLink={true}
+          appearance={{
+            theme: ThemeSupa,
+            variables: {
+              default: {
+                colors: {
+                  brand: "#404040",
+                  brandAccent: "#52525b",
+                },
               },
             },
-          },
-        }}
-        theme="dark"
-      />
-    </div>
+          }}
+          theme="dark"
+        />
+      </>
+    )}
+  </div>
   );
 }

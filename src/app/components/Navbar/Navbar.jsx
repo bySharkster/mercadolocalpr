@@ -19,17 +19,21 @@ const supabaseClient =
   
   export const Navbar = () => {
     const [session, setSession] = useState(null);
-    console.log(session)
+    
     useEffect(() => {
       const fetchSession = async () => {
-      const { data, error } = await supabase.auth.getSession()
+
+      const {
+        data: { user },
+      } = await supabaseClient.auth.getUser();
       if (error) return
       if (data) {
-        setSession(data)
+        setSession(user);
       }
-      console.log(data)
+      console.log(user);
       }
-  }, [])
+      fetchSession()
+    }, [])
 
     return (
     <nav className="bg-[#3A4F41]">
