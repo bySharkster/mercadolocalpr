@@ -1,8 +1,8 @@
-import type { Metadata } from 'next'
 import './globals.css'
-import SupabaseProvider from "../../supabase-provider";
 import { Navbar } from './components/Navbar/Navbar'
 import { Footer } from './components/Footer/Footer'     
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function RootLayout({
   children,
@@ -12,11 +12,12 @@ export default function RootLayout({
   return (
     // <SupabaseProvider>
       <html lang="en">
-        <body>
+        <body className='bg-white'>
           <Navbar />
           {children}
           <Footer/>
         </body>
+        <ToastContainer />
       </html>
     // </SupabaseProvider>
   )

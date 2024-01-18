@@ -10,30 +10,28 @@ import { NavLinks } from "./NavLinks";
 import { Database } from "../../../../database.types";
 import { createClient } from "@supabase/supabase-js";
 
-const supabaseClient =
-  createClient <
-  Database >
-  (process.env.NEXT_PUBLIC_SUPABASE_URL ?? "",
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "");
-
+const supabaseClient = createClient<Database>(
+  process.env.NEXT_PUBLIC_SUPABASE_URL ?? "",
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? ""
+);
   
   export const Navbar = () => {
     const [session, setSession] = useState(null);
     
-    useEffect(() => {
-      const fetchSession = async () => {
+    // useEffect(() => {
+    //   const fetchSession = async () => {
 
-      const {
-        data: { user },
-      } = await supabaseClient.auth.getUser();
-      if (error) return
-      if (data) {
-        setSession(user);
-      }
-      console.log(user);
-      }
-      fetchSession()
-    }, [])
+    //   const {
+    //     data: { user },
+    //   } = await supabaseClient.auth.getUser();
+    //   if (error) return
+    //   if (data) {
+    //     setSession(user);
+    //   }
+    //   console.log(user);
+    //   }
+    //   fetchSession()
+    // }, [])
 
     return (
     <nav className="bg-[#3A4F41]">

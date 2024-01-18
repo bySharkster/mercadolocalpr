@@ -1,6 +1,4 @@
 "use client"
-
-import { useState } from "react";
 import { createClient } from "@supabase/supabase-js";
 // import { useRouter } from "next/router";
 import { Database } from '../../../database.types'
@@ -18,93 +16,33 @@ const supabaseClient = createClient<Database>(
 
 
 export default function Login() {
-  // const { supabase } = useSupabase();
-
-  const [name, setName] = useState();
-  const [email, setEmail] = useState();
-  const [password, setPassword] = useState();
-  const [newUser, setNewUser] = useState(false);
-  const [userData, setUserData] = useState(null);
-  // const router = useRouter();
-
-  // const handleSignUp = async () => {
-  //   const { error } = await supabaseClient.auth.signUp({
-  //     email,
-  //     password,
-  //     options: {
-  //       redirectTo: `${window.location.origin}/auth/callback`,
-  //     },
-  //   });
-  //   if (error) console.error("Error signing up:", error.message);
-  //   // else router.reload();
-  // };
-
-  // const handleSignIn = async () => {
-  //   const { error } = await supabaseClient.auth.signIn({
-  //     email,
-  //     password,
-  //   });
-  //   if (error) console.error("Error signing in:", error.message);
-  //   // else router.reload();
-  // };
-
-  // const handleSignOut = async () => {
-  //   const { error } = await supabaseClient.auth.signOut();
-  //   if (error) console.error("Error signing out:", error.message);
-  //   // else router.reload();
-  // };
-
-  const LogOut = async () => {
-    const { error } = await supabaseClient.auth.signOut();
-    if (error) console.error("Error signing out:", error.message);
-    else console.log("Signed Out");
-  }
-
-  const LogIn = async () => {
-    const { data, error } = await supabaseClient.auth.signInWithPassword({
-      email: 'gregor.gr20@gmail.com',
-      password: 'greg_123',
-    })
-    if (error) console.log(error)
-    else {
-      setUserData(data)
-      console.log(data)
-    }
-  }
-  
-
   return (
- <div className="flex flex-col p-10 m-10 bg-white rounded-md">
-    {userData ? (
-      // Render this if the user is authenticated
-      <div>
-        <h1>Welcome!</h1>
-        <button className="btn" onClick={LogOut}>Log Out</button>
-      </div>
-    ) : (
-      // Render this if the user is not authenticated
-      <>
-        <button className="btn" onClick={LogIn}>Sign in</button>
-        <Auth
-          supabaseClient={supabaseClient}
-          providers={["github"]}
-          redirectTo={`${getURL()}/auth/callback/route`}
-          magicLink={true}
-          appearance={{
-            theme: ThemeSupa,
-            variables: {
-              default: {
-                colors: {
-                  brand: "#404040",
-                  brandAccent: "#52525b",
-                },
+  <div className="grid gap-10 xl:gap-0 xl:flex justify-center xl:justify-between p-10 m-10 bg-[#E4F0D0] rounded-md">
+    <div className="border-2 p-10 rounded-md bg-white w-[40vw]">
+      <Auth
+        supabaseClient={supabaseClient}
+        providers={["github", "google", "facebook"]}
+        redirectTo={`${getURL()}/auth/callback`}
+        magicLink={true}
+        appearance={{
+          theme: ThemeSupa,
+          variables: {
+            default: {
+              colors: {
+                brand: "#404040",
+                brandAccent: "#52525b",
               },
             },
-          }}
-          theme="dark"
-        />
-      </>
-    )}
+          },
+        }}
+        theme="dark"
+      />
+    </div>
+    <div className="bg-white justify-center flex items-center border-2 rounded-md w-[40vw] xl:w-[50vw]">
+      <span className="text-6xl text-black uppercase border-2 rounded-full p-10 hover:bg-black hover:text-white transition-all">
+        put epic shit here
+      </span>
+    </div>
   </div>
   );
 }
