@@ -74,39 +74,41 @@ export default function AccountForm({ user }: { user: User | null }) {
   }
 
   return (
-    <div className="form-widget">
-      <div>
+    <div className="form-widget border-2 p-4 w-[30vw] m-4 rounded-md">
+      <div className='flex gap-4 items-center'>
         <label htmlFor="email">Email</label>
-        <input id="email" type="text" value={user?.email} disabled />
+        <input className='border-2 rounded-md p-2' id="email" type="text" value={user?.email} disabled />
       </div>
-      <div>
+      <div className='flex gap-4 items-center'>
         <label htmlFor="fullName">Full Name</label>
         <input
           id="fullName"
+          className='border-2 rounded-md p-2'
           type="text"
           value={fullname || ''}
           onChange={(e) => setFullname(e.target.value)}
         />
       </div>
-      <div>
+      <div className='flex gap-4 items-center'>
         <label htmlFor="username">Username</label>
         <input
           id="username"
+          className='border-2 rounded-md p-2'
           type="text"
           value={username || ''}
           onChange={(e) => setUsername(e.target.value)}
         />
       </div>
-      <div>
+      <div className='flex gap-4 items-center'>
         <label htmlFor="website">Website</label>
         <input
           id="website"
+          className='border-2 rounded-md p-2'
           type="url"
           value={website || ''}
           onChange={(e) => setWebsite(e.target.value)}
         />
       </div>
-
       <div>
         <button
           className="button primary block"
@@ -116,7 +118,6 @@ export default function AccountForm({ user }: { user: User | null }) {
           {loading ? 'Loading ...' : 'Update'}
         </button>
       </div>
-
       <div>
         <form action="/auth/signout" method="post">
           <button className="button block" type="submit">
