@@ -41,12 +41,12 @@ export default function About() {
         <div className="divider" style={{ color: "black" }} />
         
         <div className="flex justify-center">
-          <Image
+          {/* <Image
             src="/img/hero.jpg"
             alt="Picture of the author"
             width={500}
             height={500}
-          />
+          /> */}
         </div>
       </div>
     );

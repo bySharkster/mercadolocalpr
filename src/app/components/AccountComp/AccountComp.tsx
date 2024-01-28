@@ -1,10 +1,18 @@
-import { useState } from "react";
+'use client'
+import { useCallback, useEffect, useState } from 'react'
+import { Database } from '../../../../database.types'
+import { User, createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { toast } from 'react-toastify';
 
-export default function Profile() {
-
-  const [activeTab, setActiveTab] = useState(true)
+export const AccountComp = ({ user }: { user: User | null }) => {
+  const supabase = createClientComponentClient<Database>()
+  const [activeTab, setActiveTab] = useState(false)
   const [activeTab2, setActiveTab2] = useState(false)
-  const [activeTab3, setActiveTab3] = useState(false)
+  const [activeTab3, setActiveTab3] = useState(true)
+  const [loading, setLoading] = useState(true)
+  const [fullname, setFullname] = useState<string | null>(null)
+  const [username, setUsername] = useState<string | null>(null)
+  const [avatar_url, setAvatarUrl] = useState<string | null>(null)
 
   const handletab = () => {
     setActiveTab(true)
@@ -24,6 +32,63 @@ export default function Profile() {
     setActiveTab3(true)
   }
 
+    const getProfile = useCallback(async () => {
+    try {
+      setLoading(true)
+
+      const { data, error, status } = await supabase
+        .from('profiles')
+        .select(`full_name, username, avatar_url`)
+        .eq('id', user?.id)
+        .single()
+        console.log(data)
+      if (error && status !== 406) {
+        throw error
+      }
+
+      if (data) {
+        setFullname(data.full_name)
+        setUsername(data.username)
+        setAvatarUrl(data.avatar_url)
+      }
+    } catch (error) {
+      toast.error('Error loading user data!');
+    } finally {
+      setLoading(false)
+    }
+  }, [user, supabase])
+
+  useEffect(() => {
+    getProfile()
+  }, [user, getProfile])
+
+  async function updateProfile({
+    username,
+    avatar_url,
+  }: {
+    username: string | null
+    fullname: string | null
+    avatar_url: string | null
+  }) {
+    try {
+      setLoading(true)
+
+      const { error } = await supabase.from('profiles').upsert({
+        id: user?.id as string,
+        full_name: fullname,
+        username,
+        avatar_url,
+        updated_at: new Date().toISOString(),
+      })
+      if (error) throw error
+      alert('Profile updated!')
+    } catch (error) {
+      alert('Error updating the data!')
+    } finally {
+      setLoading(false)
+    }
+  }
+
   return (
     <div className="bg-[#E1EFE6] h-auto">
       <div className="p-10">
@@ -31,20 +96,7 @@ export default function Profile() {
 
         <div className="bg-black rounded-lg h-[12rem]">
           <div className="relative flex justify-center items-center w-24 h-24 bg-black border-2 border-black rounded-full top-[9rem] left-32">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="w-6 h-6"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"
-              />
-            </svg>
+            <img src={avatar_url || ''} alt="profile picture" className="w-24 h-24 rounded-full" />
           </div>
         </div>
 
@@ -197,14 +249,26 @@ export default function Profile() {
           }
         >
           <div className="grid gap-4">
+            <label htmlFor="email">Email</label>
+            <input 
+              id="email" 
+              type="text" 
+              className='border-2 rounded-md p-2 text-white' 
+              value={user?.email} 
+              disabled 
+            />
+            <label htmlFor="Name">Name</label>
             <input
               type="text"
               placeholder="Change name:"
               className="w-full max-w-xs bg-white border-2 border-black input input-bordered"
+              value={username || 'Change your number'}
             />
-            <input
-              type="text"
+            <label htmlFor="Description">Description</label>
+            <textarea
               placeholder="Change description:"
+              rows={5}
+              cols={50}
               className="w-full max-w-xs bg-white border-2 border-black input input-bordered"
             />
             <div className="flex justify-between gap-10">
@@ -256,11 +320,20 @@ export default function Profile() {
                 />
               </div>
             </div>
-            <input
-              type="text"
-              placeholder="Change Phone Number"
-              className="w-full max-w-xs bg-white border-2 border-black input input-bordered"
-            />
+            <div className='flex justify-between'>
+              <button
+                className="btn btn-primary block"
+                onClick={() => updateProfile({ fullname, username, avatar_url })}
+                disabled={loading}
+              >
+                {loading ? 'Loading ...' : 'Update'}
+              </button>
+              <form action="/auth/signout" method="post">
+                <button className="btn btn-outline block" type="submit">
+                  Sign out
+                </button>
+              </form>
+            </div>
           </div>
         </div>
       </div>
