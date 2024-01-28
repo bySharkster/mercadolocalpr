@@ -1,16 +1,20 @@
-
-import { createClient } from "@/../utils/server";
-// import { useRouter } from "next/router";
+import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
 import { Database } from '../../../database.types'
+import { createClient } from "@/../utils/server";
 import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
-// import { useSupabase } from "../../../supabase-provider";
 import { getURL } from "../../../utils/helpers";
-import { InfoTest } from "../components/InfoTest/InfoTest";
 import { headers, cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import Link from "next/link";
-export default function Login() {
+import { LoginForm } from '../components/Forms/LoginForm';
+
+export default async function Login() {
+  const supabase = createServerComponentClient<Database>({ cookies })
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
 
   const signIn = async (formData: FormData) => {
     "use server";
@@ -83,40 +87,8 @@ export default function Login() {
         put epic shit here
       </span>
     </div> */}
-      <div className="flex-1 flex flex-col w-full px-8 sm:max-w-md justify-center gap-2">
-      <form
-        className="animate-in flex-1 flex flex-col w-full justify-center gap-2 text-foreground bg-white p-4 border-2 rounded-md"
-        action={signIn}
-      >
-        <label className="text-md" htmlFor="email">
-          Email
-        </label>
-        <input
-          className="rounded-md px-4 py-2 bg-inherit border mb-6"
-          name="email"
-          placeholder="you@example.com"
-          required
-        />
-        <label className="text-md" htmlFor="password">
-          Password
-        </label>
-        <input
-          className="rounded-md px-4 py-2 bg-inherit border mb-6"
-          type="password"
-          name="password"
-          placeholder="••••••••"
-          required
-        />
-        <button className="bg-green-700 rounded-md px-4 py-2 text-foreground mb-2">
-          Sign In
-        </button>
-        <button
-          formAction={signUp}
-          className="border border-foreground/20 rounded-md px-4 py-2 text-foreground mb-2"
-        >
-          Sign Up
-        </button>
-      </form>
+    <div className="flex-1 flex flex-col w-full px-8 sm:max-w-md justify-center gap-2">
+    <LoginForm signIn={signIn} signUp={signUp} user={user}/>
     </div>
   </div>
   );

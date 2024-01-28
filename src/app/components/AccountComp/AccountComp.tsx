@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { Database } from '../../../../database.types'
 import { User, createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { toast } from 'react-toastify';
+import axios from 'axios';
 
 export const AccountComp = ({ user }: { user: User | null }) => {
   const supabase = createClientComponentClient<Database>()
@@ -13,6 +14,38 @@ export const AccountComp = ({ user }: { user: User | null }) => {
   const [fullname, setFullname] = useState<string | null>(null)
   const [username, setUsername] = useState<string | null>(null)
   const [avatar_url, setAvatarUrl] = useState<string | null>(null)
+  const [file, setFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files ? event.target.files[0] : null;
+    setFile(file);
+
+    // Create a URL representing the file
+    if (file) {
+      setPreviewUrl(URL.createObjectURL(file));
+    } else {
+      setPreviewUrl(null);
+    }
+  };
+
+  const handleFileUpload = async () => {
+  if (!file) return;
+
+  const formData = new FormData();
+  formData.append('file', file);
+
+  try {
+    const response = await axios.post('/api/upload', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    console.log(response.data);
+  } catch (error) {
+    console.error(error);
+  }
+  };
 
   const handletab = () => {
     setActiveTab(true)
@@ -32,7 +65,7 @@ export const AccountComp = ({ user }: { user: User | null }) => {
     setActiveTab3(true)
   }
 
-    const getProfile = useCallback(async () => {
+  const getProfile = useCallback(async () => {
     try {
       setLoading(true)
 
@@ -293,7 +326,10 @@ export const AccountComp = ({ user }: { user: User | null }) => {
                 <input
                   type="file"
                   className="w-full max-w-xs bg-white border-2 border-black file-input file-input-bordered"
+                  onChange={handleFileChange}
                 />
+                {previewUrl && <img src={previewUrl} alt="Preview" />}
+                <button className='btn btn-ghost' onClick={handleFileUpload}>Upload</button>
               </div>
               <div className="grid gap-4 p-4 border-2 border-gray-300 rounded-md">
                 <div className="flex gap-4">
