@@ -2,21 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-.greeting {
-  /* Other styles for the greeting element */
-  animation: greeting-fade-in 0.5s ease-in;
-}
-
-@keyframes greeting-fade-in {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
-}
-
 .menu-nav {
   animation: menu-fade-in 1s ease-in;
 }
@@ -44,25 +29,6 @@
 
   to {
     bottom: 50px;
-  }
-}
-
-.custom-style {
-  display: inline-block;
-  padding: 10px 20px;
-  font-size: 24px;
-  /* font-weight: bold; */
-  text-align: center;
-  /* text-decoration: none; */
-  color: #000000;
-  background-color: #E1EFE6;
-  border: 2px solid #000;
-  border-radius: 0px 10px 10px 0px;
-  box-shadow: -5px 5px 0px #000;
-  transition: all 0.3s ease;
-
-  svg {
-    color: black;
   }
 }
 

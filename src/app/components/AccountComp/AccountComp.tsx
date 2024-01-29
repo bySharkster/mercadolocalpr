@@ -13,7 +13,9 @@ export const AccountComp = ({ user }: { user: User | null }) => {
   const [loading, setLoading] = useState(true)
   const [fullname, setFullname] = useState<string | null>(null)
   const [username, setUsername] = useState<string | null>(null)
-  const [avatar_url, setAvatarUrl] = useState<string | null>(null)
+  const [profileImageUrl, setprofileImageUrl] = useState<string | null>(null)
+  const [bannerImageUrl, setbannerImageUrl] = useState<string | null>(null)
+  const [description, setDescription] = useState<string | null>(null)
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
@@ -36,7 +38,7 @@ export const AccountComp = ({ user }: { user: User | null }) => {
   formData.append('file', file);
 
   try {
-    const response = await axios.post('/api/upload', formData, {
+    const response = await axios.post('/api/upload/upload', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
@@ -71,7 +73,7 @@ export const AccountComp = ({ user }: { user: User | null }) => {
 
       const { data, error, status } = await supabase
         .from('profiles')
-        .select(`full_name, username, avatar_url`)
+        .select(`full_name, username, description, profile_image_url, banner_image_url`)
         .eq('id', user?.id)
         .single()
         console.log(data)
@@ -82,7 +84,9 @@ export const AccountComp = ({ user }: { user: User | null }) => {
       if (data) {
         setFullname(data.full_name)
         setUsername(data.username)
-        setAvatarUrl(data.avatar_url)
+        setDescription(data.description)
+        setprofileImageUrl(data.profile_image_url)
+        setbannerImageUrl(data.banner_image_url)
       }
     } catch (error) {
       toast.error('Error loading user data!');
@@ -97,11 +101,16 @@ export const AccountComp = ({ user }: { user: User | null }) => {
 
   async function updateProfile({
     username,
-    avatar_url,
+    fullname,
+    description,
+    profile_image_url,
+    banner_image_url,
   }: {
     username: string | null
     fullname: string | null
-    avatar_url: string | null
+    description: string | null
+    profile_image_url: string | null
+    banner_image_url: string | null
   }) {
     try {
       setLoading(true)
@@ -110,7 +119,9 @@ export const AccountComp = ({ user }: { user: User | null }) => {
         id: user?.id as string,
         full_name: fullname,
         username,
-        avatar_url,
+        description,
+        profile_image_url,
+        banner_image_url,
         updated_at: new Date().toISOString(),
       })
       if (error) throw error
@@ -129,7 +140,7 @@ export const AccountComp = ({ user }: { user: User | null }) => {
 
         <div className="bg-black rounded-lg h-[12rem]">
           <div className="relative flex justify-center items-center w-24 h-24 bg-black border-2 border-black rounded-full top-[9rem] left-32">
-            <img src={avatar_url || ''} alt="profile picture" className="w-24 h-24 rounded-full" />
+            <img src={profileImageUrl || ''} alt="profile picture" className="w-24 h-24 rounded-full" />
           </div>
         </div>
 
@@ -295,7 +306,8 @@ export const AccountComp = ({ user }: { user: User | null }) => {
               type="text"
               placeholder="Change name:"
               className="w-full max-w-xs bg-white border-2 border-black input input-bordered"
-              value={username || 'Change your number'}
+              value={username ?? ''}
+              onChange={(e) => setUsername(e.target.value)}
             />
             <label htmlFor="Description">Description</label>
             <textarea
@@ -303,6 +315,8 @@ export const AccountComp = ({ user }: { user: User | null }) => {
               rows={5}
               cols={50}
               className="w-full max-w-xs bg-white border-2 border-black input input-bordered"
+              value={description ?? ''}
+              onChange={(e) => setDescription(e.target.value)}
             />
             <div className="flex justify-between gap-10">
               <div className="grid gap-4 p-4 border-2 border-gray-300 rounded-md">
@@ -328,7 +342,7 @@ export const AccountComp = ({ user }: { user: User | null }) => {
                   className="w-full max-w-xs bg-white border-2 border-black file-input file-input-bordered"
                   onChange={handleFileChange}
                 />
-                {previewUrl && <img src={previewUrl} alt="Preview" />}
+                {previewUrl && <img className='h-[30vh] w-[20vw]' src={previewUrl} alt="Preview" />}
                 <button className='btn btn-ghost' onClick={handleFileUpload}>Upload</button>
               </div>
               <div className="grid gap-4 p-4 border-2 border-gray-300 rounded-md">
@@ -359,7 +373,7 @@ export const AccountComp = ({ user }: { user: User | null }) => {
             <div className='flex justify-between'>
               <button
                 className="btn btn-primary block"
-                onClick={() => updateProfile({ fullname, username, avatar_url })}
+                // onClick={() => updateProfile({ fullname, username, profileImageUrl })}
                 disabled={loading}
               >
                 {loading ? 'Loading ...' : 'Update'}

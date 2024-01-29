@@ -1,10 +1,9 @@
 import { createClient } from "@supabase/supabase-js";
 import multiparty from "multiparty";
-import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import fs from "fs";
 import mime from "mime-types";
 
-const bucketName = "fromdtrip-ecommerce-bucket";
+const bucketName = "mercadolocalpr";
 
 const supabaseUrl = "your-supabase-url";
 const supabaseKey = "your-supabase-key";
@@ -19,15 +18,26 @@ export default async function handle(req: any, res: any) {
     });
   });
   console.log("length:", files.file.length);
-  const client = new S3Client({
-    region: "us-east-1",
-    credentials: {
-      accessKeyId: process.env.S3_ACCESS_KEY,
-      secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
-    },
-  });
   const links = [];
   for (const file of files.file) {
-    // Continue your code here...
+    const fileData = fs.readFileSync(file.path);
+    const fileName = file.originalFilename;
+    const fileType = mime.lookup(fileName);
+
+    if (!fileType) {
+      throw new Error('Invalid file type');
+    }
+
+    const { error } = await supabase.storage.from(bucketName).upload(fileName, fileData, {
+      contentType: fileType,
+    });
+
+    if (error) {
+      throw error;
+    }
+
+    links.push(`https://${bucketName}.supabase.co/${fileName}`);
   }
+
+  res.json({ links });
 }

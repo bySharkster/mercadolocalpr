@@ -1,8 +1,6 @@
 "use client"
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { CiFacebook } from "react-icons/ci";
-import { CiInstagram } from "react-icons/ci";
 import { CiHeart } from "react-icons/ci";
 import { CiUser } from "react-icons/ci";
 import { NavLinks } from "./NavLinks";
@@ -52,11 +50,9 @@ import { NavLinks } from "./NavLinks";
           <div className="flex gap-2 justify-evenly"></div>
           {isLoggedIn ? (
             <div className="hidden gap-2 md:flex">
-              <CiFacebook size={"4vh"} color="white" />
-              <CiInstagram size={"4vh"} color="white" />
               <CiHeart size={"4vh"} color="white" />
               <Link
-                href={"/profile"}
+                href={"/account"}
                 className="dropdown dropdown-left dropdown-hover"
               >
                 <label tabIndex={0}>
@@ -64,17 +60,17 @@ import { NavLinks } from "./NavLinks";
                 </label>
                 <ul
                   tabIndex={0}
-                  className="dropdown-content z-[1] menu p-2 shadow custom-style rounded-box w-52"
+                  className="dropdown-content z-[1] menu p-2 shadow rounded-box bg-white w-[10vw]"
                 >
-                  <li>
-                    <span>Crear publicacion</span>
+                  <li className="py-2">
+                    <Link href={"/newPost"}>Crear publicacion</Link>
                   </li>
-                  <li>
-                    <Link href={"/user/settings"}>Settings</Link>
+                  <li className="py-2">
+                    <Link href={"/account#settings"}>Settings</Link>
                   </li>
-                  <li>
+                  <li className="py-2">
                     <button
-                      className="btn"
+                      className="p-2 flex justify-center items-center w-full rounded-md bg-[#3A4F41] text-white hover:bg-[black] transition-all"
                       onClick={() => setIsLoggedIn(false)}
                     >
                       Log out
