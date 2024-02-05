@@ -1,43 +1,3 @@
-// import { MergeDeep } from 'type-fest'
-// import { Database as DatabaseGenerated } from './database-generated.types'
-// export { Json } from './database-generated.types'
-
-// export type Database = MergeDeep<DatabaseGenerated, {
-//   public: {
-//     Tables: {
-//       notes: {
-//         Row: {
-//           id: number
-//           title: string | null
-//         }
-//         Insert: {
-//           id?: number
-//           title?: string | null
-//         }
-//         Update: {
-//           id?: number
-//           title?: string | null
-//         }
-//         Relationships: []
-//       }
-//     }
-//     Views: {
-//       [_ in never]: never
-//     }
-//     Functions: {
-//       [_ in never]: never
-//     }
-//     Enums: {
-//       [_ in never]: never
-//     }
-//     CompositeTypes: {
-//       [_ in never]: never
-//     }
-//   }
-// }
-// >
-
-
 export type Json =
   | string
   | number
@@ -49,20 +9,112 @@ export type Json =
 export interface Database {
   public: {
     Tables: {
-      notes: {
+      categories: {
         Row: {
+          category_name: string | null
+          created_at: string
           id: number
-          title: string | null
         }
         Insert: {
+          category_name?: string | null
+          created_at?: string
           id?: number
-          title?: string | null
         }
         Update: {
+          category_name?: string | null
+          created_at?: string
           id?: number
-          title?: string | null
         }
         Relationships: []
+      }
+      posts: {
+        Row: {
+          category: number | null
+          created_at: string
+          description: string | null
+          id: number
+          location: string | null
+          photo_url: string | null
+          price: number | null
+          title: string | null
+          user_id: string | null
+        }
+        Insert: {
+          category?: number | null
+          created_at?: string
+          description?: string | null
+          id?: number
+          location?: string | null
+          photo_url?: string | null
+          price?: number | null
+          title?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          category?: number | null
+          created_at?: string
+          description?: string | null
+          id?: number
+          location?: string | null
+          photo_url?: string | null
+          price?: number | null
+          title?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "posts_category_fkey"
+            columns: ["category"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "posts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      profiles: {
+        Row: {
+          banner_image_url: string | null
+          description: string | null
+          full_name: string | null
+          id: string
+          profile_image_url: string | null
+          updated_at: string | null
+          username: string | null
+        }
+        Insert: {
+          banner_image_url?: string | null
+          description?: string | null
+          full_name?: string | null
+          id: string
+          profile_image_url?: string | null
+          updated_at?: string | null
+          username?: string | null
+        }
+        Update: {
+          banner_image_url?: string | null
+          description?: string | null
+          full_name?: string | null
+          id?: string
+          profile_image_url?: string | null
+          updated_at?: string | null
+          username?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profiles_id_fkey"
+            columns: ["id"]
+            isOneToOne: true
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
       }
     }
     Views: {

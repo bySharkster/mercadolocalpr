@@ -373,7 +373,7 @@ export const AccountComp = ({ user }: { user: User | null }) => {
             <div className='flex justify-between'>
               <button
                 className="btn btn-primary block"
-                // onClick={() => updateProfile({ fullname, username, profileImageUrl })}
+                onClick={() => updateProfile({ fullname, username, profile_image_url: profileImageUrl, banner_image_url: bannerImageUrl, description})}
                 disabled={loading}
               >
                 {loading ? 'Loading ...' : 'Update'}

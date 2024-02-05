@@ -102,9 +102,9 @@ import { MobileMenu } from "./MobileMenu";
             <span className="text-white">© 2021</span>
           </div>
           <div>
-            <a href="#" className="text-white">
+            <div href="#" className="text-white">
               Conviertace en vendedor
-            </a>
+            </div>
           </div>
         </div>
       </nav>

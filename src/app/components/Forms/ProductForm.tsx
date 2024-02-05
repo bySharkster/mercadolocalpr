@@ -1,16 +1,15 @@
 "use client"
 import { useState, useEffect, SetStateAction } from "react"
 import { useRouter } from "next/navigation"
-import axios from "axios"
 import { Spinner } from "../Spinner/Spinner"
 import { ReactSortable } from "react-sortablejs"
 import { Database } from '../../../../database.types'
-import { User, createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 export const ProductForm = ({user}: {user: any}) => {
-  const supabase = createClientComponentClient<Database>()
+  const supabase = createClientComponentClient<Database>();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("");
@@ -42,25 +41,21 @@ export const ProductForm = ({user}: {user: any}) => {
     // images: string | null
   }) => {
     try {
-    //   setLoading(true)
-
-      const { error } = await supabase.from('posts').insert([{
+      const { error } = await supabase.from('posts').insert({
         title,
         description,
-        price,
+        price: Number(price), // Convert price to a number
         location,
         user_id: user?.id as string,
         // category,
         // images,
-        updated_at: new Date().toISOString(),
-      }])
+      })
       if (error) throw error
       alert('Post created!')
     } catch (error) {
-      alert('Error creating the post!')
+      toast.error('Error creating the post!')
     } finally {
-    //   setLoading(false)
-    console.log("created Post")
+      console.log("created Post")
     }
   };
 
@@ -104,7 +99,7 @@ export const ProductForm = ({user}: {user: any}) => {
 
   return (
     <>
-      <form className="grid">
+      <div className="grid">
         <input
           type="text"
           placeholder="Nombre del articulo"
@@ -135,7 +130,7 @@ export const ProductForm = ({user}: {user: any}) => {
         />
         <textarea
           placeholder="Descripcion"
-          className="p-3 bg-white border-2 rounded-md my-3"
+          className="p-3 my-3 bg-white border-2 rounded-md"
           value={description}
           onChange={(ev) => setDescription(ev.target.value)}
         />
@@ -207,7 +202,7 @@ export const ProductForm = ({user}: {user: any}) => {
                 Photos
             </label>
             <input
-                className="bg-transparent flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                className="flex w-full h-10 px-3 py-2 text-sm bg-transparent border rounded-md border-input bg-background ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 id="photos"
                 multiple
                 type="file"
@@ -216,12 +211,11 @@ export const ProductForm = ({user}: {user: any}) => {
         </div>
         <button
         className="btn"
-        type="submit"
-        onClick={() => submitPost({ title, description, price, location: location.toString() })}
+        onClick={() => submitPost({ title, description, price, location })}
         >
         Submit Post
         </button>
-      </form>
+      </div>
       <ToastContainer />
     </>
   );
