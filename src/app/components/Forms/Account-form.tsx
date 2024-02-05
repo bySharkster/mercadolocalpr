@@ -9,7 +9,7 @@ export default function AccountForm({ user }: { user: User | null }) {
   const [loading, setLoading] = useState(true)
   const [fullname, setFullname] = useState<string | null>(null)
   const [username, setUsername] = useState<string | null>(null)
-  const [website, setWebsite] = useState<string | null>(null)
+  const [description, setDescription] = useState<string | null>(null)
   const [avatar_url, setAvatarUrl] = useState<string | null>(null)
 
   const getProfile = useCallback(async () => {
@@ -18,8 +18,8 @@ export default function AccountForm({ user }: { user: User | null }) {
 
       const { data, error, status } = await supabase
         .from('profiles')
-        .select(`full_name, username, website, avatar_url`)
-        .eq('id', user?.id)
+        .select(`full_name, username, description, profile_image_url`)
+        .eq('id', user?.id ?? "")
         .single()
         console.log(data)
       if (error && status !== 406) {
@@ -29,8 +29,8 @@ export default function AccountForm({ user }: { user: User | null }) {
       if (data) {
         setFullname(data.full_name)
         setUsername(data.username)
-        setWebsite(data.website)
-        setAvatarUrl(data.avatar_url)
+        setDescription(data.description)
+        setAvatarUrl(data.profile_image_url)
       }
     } catch (error) {
       toast.error('Error loading user data!');
@@ -46,12 +46,12 @@ export default function AccountForm({ user }: { user: User | null }) {
   async function updateProfile({
     username,
     website,
-    avatar_url,
+    profile_image_url,
   }: {
     username: string | null
     fullname: string | null
     website: string | null
-    avatar_url: string | null
+    profile_image_url: string | null
   }) {
     try {
       setLoading(true)
@@ -112,7 +112,7 @@ export default function AccountForm({ user }: { user: User | null }) {
       <div>
         <button
           className="button primary block"
-          onClick={() => updateProfile({ fullname, username, website, avatar_url })}
+          onClick={() => updateProfile({ fullname, username, website, profile_image_url: avatar_url })}
           disabled={loading}
         >
           {loading ? 'Loading ...' : 'Update'}
