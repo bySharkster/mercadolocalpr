@@ -6,6 +6,13 @@ import 'react-toastify/dist/ReactToastify.css';
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
 import { cookies } from 'next/headers'
 import { Database } from '../../database.types'
+
+import { Metadata } from 'next'
+ 
+export const metadata: Metadata = {
+  title: 'MercadoLocal PR',
+}
+
 export default async function RootLayout({
   children,
 }: {
@@ -20,7 +27,6 @@ export default async function RootLayout({
 
 
   return (
-    // <SupabaseProvider>
       <html lang="en">
         <body className='bg-white'>
           <Navbar user={user}/>
@@ -29,6 +35,5 @@ export default async function RootLayout({
         </body>
         <ToastContainer />
       </html>
-    // </SupabaseProvider>
   )
 }

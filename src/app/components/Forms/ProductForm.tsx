@@ -16,6 +16,7 @@ export const ProductForm = ({user}: {user: any}) => {
   const [category, setCategory] = useState("");
   const [price, setPrice] = useState("");
   const [images, setImages] = useState([]);
+  const [condition, setCondition] = useState("");
   const [location, setLocation] = useState("");
   const [goToProducts, setGoToProducts] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
@@ -43,7 +44,7 @@ export const ProductForm = ({user}: {user: any}) => {
     try {
     //   setLoading(true)
 
-      const { error } = await supabase.from('posts').insert({
+      const { error } = await supabase.from('posts').insert([{
         title,
         description,
         price,
@@ -52,7 +53,7 @@ export const ProductForm = ({user}: {user: any}) => {
         // category,
         // images,
         updated_at: new Date().toISOString(),
-      }).select()
+      }])
       if (error) throw error
       alert('Post created!')
     } catch (error) {
@@ -72,42 +73,7 @@ export const ProductForm = ({user}: {user: any}) => {
   if (goToProducts) {
     router.push("/");
   }
-
-  async function updateProfile({
-    username,
-    fullname,
-    description,
-    profile_image_url,
-    banner_image_url,
-  }: {
-    username: string | null
-    fullname: string | null
-    description: string | null
-    profile_image_url: string | null
-    banner_image_url: string | null
-  }) {
-    try {
-    //   setLoading(true)
-
-      const { error } = await supabase.from('posts').upsert({
-        id: user?.id as string,
-        full_name: fullname,
-        username,
-        description,
-        profile_image_url,
-        banner_image_url,
-        updated_at: new Date().toISOString(),
-      })
-      if (error) throw error
-      alert('Profile updated!')
-    } catch (error) {
-      alert('Error updating the data!')
-    } finally {
-    //   setLoading(false)
-    console.log("updated Profile")
-    }
-  }
-
+     
   // async function uploadImages(ev) {
   //   const files = ev.target?.files;
   //   if (files?.length > 0) {
@@ -139,48 +105,54 @@ export const ProductForm = ({user}: {user: any}) => {
   return (
     <>
       <form className="grid">
-        <label className="py-3">Product name</label>
         <input
           type="text"
-          placeholder="product name"
-          className="p-3 bg-white"
+          placeholder="Nombre del articulo"
+          className="p-3 bg-white border-2 rounded-md"
           value={title}
           onChange={(ev) => setTitle(ev.target.value)}
         />
-        <label className="py-3">Category</label>
-        {/* <select value={category} onChange={(ev) => setCategory(ev.target.value)}>
+        <select 
+          disabled 
+          className="p-3 my-3 bg-white border-2 rounded-md"
+          value={category} 
+          onChange={(ev) => setCategory(ev.target.value)}
+        >
           <option value="0">Uncategorized</option>
-          {categories.length > 0 &&
+          {/* {categories.length > 0 &&
             categories.map((category) => (
               <option key={category._id} value={category._id}>
                 {category.name}
               </option>
-            ))}
-        </select> */}
-        <label className="py-3">Price</label>
+            ))} */}
+        </select>
         <input
           type="number"
-          placeholder="price"
-          className="p-3 bg-white"
+          placeholder="Precio del articulo"
+          className="p-3 bg-white border-2 rounded-md"
           value={price}
           onChange={(ev) => setPrice(ev.target.value)}
         />
-        <label className="py-3">Description</label>
         <textarea
-          placeholder="description"
-          className="p-3 bg-white"
+          placeholder="Descripcion"
+          className="p-3 bg-white border-2 rounded-md my-3"
           value={description}
           onChange={(ev) => setDescription(ev.target.value)}
         />
-        <label className="py-3">Location</label>
         <input
           type="text"
-          placeholder="location"
-          className="p-3 bg-white"
+          placeholder="Localizacion"
+          className="p-3 bg-white border-2 rounded-md"
           value={location}
           onChange={(ev) => setLocation(ev.target.value)}
         />
-        <label className="py-3">Condition</label>
+        <input
+          type="text"
+          placeholder="Condicion"
+          className="p-3 my-3 bg-white border-2 rounded-md"
+          value={condition}
+          onChange={(ev) => setCondition(ev.target.value)}
+        />
         <label>Photos</label>
         {!!images?.length && (
           <div className="h-8 text-lg">

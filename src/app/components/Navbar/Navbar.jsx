@@ -4,14 +4,15 @@ import Link from "next/link";
 import { CiHeart } from "react-icons/ci";
 import { CiUser } from "react-icons/ci";
 import { NavLinks } from "./NavLinks";
-  
+import { MobileMenu } from "./MobileMenu";
+
   export const Navbar = ({user}) => { 
     const [isLoggedIn, setIsLoggedIn] = useState(false);   
     useEffect(() => {
       if (user) {
         setIsLoggedIn(true);
       }
-    }, [])
+    }, [user])
 
     return (
       <nav className="bg-[#3A4F41]">
@@ -47,7 +48,6 @@ import { NavLinks } from "./NavLinks";
               </svg>
             </button>
           </div>
-          <div className="flex gap-2 justify-evenly"></div>
           {isLoggedIn ? (
             <div className="hidden gap-2 md:flex">
               <CiHeart size={"4vh"} color="white" />
@@ -91,6 +91,7 @@ import { NavLinks } from "./NavLinks";
               </Link>
             </div>
           )}
+          <MobileMenu isLoggedIn={isLoggedIn}/>
         </div>
         <div className="p-3 bg-white ">
           <NavLinks />

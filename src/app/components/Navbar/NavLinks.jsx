@@ -41,14 +41,14 @@ import Link from "next/link";
       name: "Otros",
       link: "/category/Otros",
     },
-    {
-      id: 9,
-      name: "Todos",
-      link: "/category/Todos",
-    },
+    // {
+    //   id: 9,
+    //   name: "Todos",
+    //   link: "/category/Todos",
+    // },
 
     {
-      id: 10,
+      id: 9,
       name: "contactece",
       link: "/about#contacto",
     },
