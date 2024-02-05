@@ -97,16 +97,16 @@ export default function AccountForm({ user }: { user: User | null }) {
           onChange={(e) => setUsername(e.target.value)}
         />
       </div>
-      <div className='flex gap-4 items-center'>
-        <label htmlFor="website">Website</label>
-        <input
-          id="website"
-          className='border-2 rounded-md p-2'
-          type="url"
-          value={website || ''}
-          onChange={(e) => setWebsite(e.target.value)}
-        />
-      </div>
+        {/* <div className='flex gap-4 items-center'>
+          <label htmlFor="website">Website</label>
+          <input
+            id="website"
+            className='border-2 rounded-md p-2'
+            type="url"
+            value={website || ''}
+            onChange={(e) => setWebsite(e.target.value)}
+          />
+        </div> */}
       <div>
         <button
           className="button primary block"
