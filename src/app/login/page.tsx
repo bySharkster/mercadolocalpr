@@ -1,9 +1,9 @@
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
 import { Database } from '../../../database.types'
 import { createClient } from "@/../utils/server";
-import { Auth } from "@supabase/auth-ui-react";
-import { ThemeSupa } from "@supabase/auth-ui-shared";
-import { getURL } from "../../../utils/helpers";
+// import { Auth } from "@supabase/auth-ui-react";
+// import { ThemeSupa } from "@supabase/auth-ui-shared";
+// import { getURL } from "../../../utils/helpers";
 import { headers, cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { LoginForm } from '../components/Forms/LoginForm';
