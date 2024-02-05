@@ -74,9 +74,9 @@ export const AccountComp = ({ user }: { user: User | null }) => {
       const { data, error, status } = await supabase
         .from('profiles')
         .select(`full_name, username, description, profile_image_url, banner_image_url`)
-        .eq('id', user?.id)
+        .eq('id', user?.id ?? '')
         .single()
-        console.log(data)
+      console.log(data)
       if (error && status !== 406) {
         throw error
       }
