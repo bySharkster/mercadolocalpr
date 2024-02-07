@@ -6,7 +6,7 @@ export type Json =
   | { [key: string]: Json | undefined }
   | Json[]
 
-export interface Database {
+export type Database = {
   public: {
     Tables: {
       categories: {
@@ -73,7 +73,7 @@ export interface Database {
             foreignKeyName: "posts_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "profiles"
+            referencedRelation: "users"
             referencedColumns: ["id"]
           }
         ]
@@ -86,6 +86,7 @@ export interface Database {
           id: string
           profile_image_url: string | null
           updated_at: string | null
+          user_id: string | null
           username: string | null
         }
         Insert: {
@@ -95,6 +96,7 @@ export interface Database {
           id: string
           profile_image_url?: string | null
           updated_at?: string | null
+          user_id?: string | null
           username?: string | null
         }
         Update: {
@@ -104,6 +106,7 @@ export interface Database {
           id?: string
           profile_image_url?: string | null
           updated_at?: string | null
+          user_id?: string | null
           username?: string | null
         }
         Relationships: [
@@ -111,6 +114,13 @@ export interface Database {
             foreignKeyName: "profiles_id_fkey"
             columns: ["id"]
             isOneToOne: true
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "profiles_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
           }

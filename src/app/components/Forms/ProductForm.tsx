@@ -1,43 +1,49 @@
 "use client"
 import { useState, useEffect, SetStateAction } from "react"
-import { useRouter } from "next/navigation"
 import { Spinner } from "../Spinner/Spinner"
 import { ReactSortable } from "react-sortablejs"
-import { Database } from '../../../../database.types'
+import type { Database } from '../../../../database.types'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+
+type CategoryTable = Database['public']['Tables']['categories']['Row']
 
 export const ProductForm = ({user}: {user: any}) => {
   const supabase = createClientComponentClient<Database>();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [stateCategory, setStateCategory] = useState<CategoryTable[] | null>(null);
   const [category, setCategory] = useState("");
   const [price, setPrice] = useState("");
   const [images, setImages] = useState([]);
   const [condition, setCondition] = useState("");
   const [location, setLocation] = useState("");
-  const [goToProducts, setGoToProducts] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
-  const router = useRouter();
 
-  // useEffect(() => {
-  //   fetchCategories();
-  // }, []);
+  useEffect(() => {
+    const getData = async () => {
+      const { data } = await supabase.from('categories').select()
+      setStateCategory(data)
+      console.log(data)
+    }
 
+    getData()
+  }, [])
+ 
   const submitPost = async ({
     title,
     description,
     price,
     location,
-    // category,
+    category,
     // images,
   }: {
     title: string | null
     description: string | null
     price: string | null
     location: string | null
-    // category: string | null
+    category: string | null
     // images: string | null
   }) => {
     try {
@@ -47,27 +53,18 @@ export const ProductForm = ({user}: {user: any}) => {
         price: Number(price), // Convert price to a number
         location,
         user_id: user?.id as string,
-        // category,
+        category: Number(category), // Convert category to a number
         // images,
       })
       if (error) throw error
       alert('Post created!')
+
     } catch (error) {
       toast.error('Error creating the post!')
     } finally {
       console.log("created Post")
     }
   };
-
-  // function fetchCategories() {
-  //   axios.get("/api/categories").then((result) => {
-  //     setCategoires(result.data);
-  //   });
-  // }
-
-  if (goToProducts) {
-    router.push("/");
-  }
      
   // async function uploadImages(ev) {
   //   const files = ev.target?.files;
@@ -108,18 +105,13 @@ export const ProductForm = ({user}: {user: any}) => {
           onChange={(ev) => setTitle(ev.target.value)}
         />
         <select 
-          disabled 
           className="p-3 my-3 bg-white border-2 rounded-md"
-          value={category} 
+          value={category}
           onChange={(ev) => setCategory(ev.target.value)}
         >
-          <option value="0">Uncategorized</option>
-          {/* {categories.length > 0 &&
-            categories.map((category) => (
-              <option key={category._id} value={category._id}>
-                {category.name}
-              </option>
-            ))} */}
+          {stateCategory?.map((category) => (
+            <option key={category.id} value={category.id}>{category.category_name}</option>
+          ))}
         </select>
         <input
           type="number"
@@ -141,13 +133,15 @@ export const ProductForm = ({user}: {user: any}) => {
           value={location}
           onChange={(ev) => setLocation(ev.target.value)}
         />
-        <input
-          type="text"
-          placeholder="Condicion"
+        <select
           className="p-3 my-3 bg-white border-2 rounded-md"
           value={condition}
           onChange={(ev) => setCondition(ev.target.value)}
-        />
+        >
+          <option value="new">Nuevo</option>
+          <option value="like new">Como nuevo</option>
+          <option value="used">Usado</option>
+        </select>
         <label>Photos</label>
         {!!images?.length && (
           <div className="h-8 text-lg">
@@ -211,7 +205,7 @@ export const ProductForm = ({user}: {user: any}) => {
         </div>
         <button
         className="btn"
-        onClick={() => submitPost({ title, description, price, location })}
+        onClick={() => submitPost({ title, description, price, location, category })}
         >
         Submit Post
         </button>
