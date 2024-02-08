@@ -26,7 +26,7 @@ export const CatPosts = () => {
           className="w-[38w] md:w-[25vw] lg:w-[15vw] h-[50vh] p-2 bg-white border rounded-md"
         >
           <Image
-            className="w-full h-[20vh] object-cover border rounded-md"
+            className="w-full object-cover border rounded-md"
             src={post.photo_url || '/img/placeholder.jpg'}
             alt={post.title || 'No Title'}
             width={500}

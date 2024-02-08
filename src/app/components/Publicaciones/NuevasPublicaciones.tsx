@@ -1,8 +1,23 @@
-import React from 'react'
+"use client";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { useEffect, useState } from "react";
+import type { Database } from "../../../../database.types";
+import Image from "next/image";
+
+type PostTable = Database["public"]["Tables"]["posts"]["Row"];
 
 export const NuevasPublicaciones = () => {
+  const supabase = createClientComponentClient<Database>();
+  const [posts, setPosts] = useState<PostTable[] | null>(null);
+  useEffect(() => {
+    const getData = async () => {
+      const { data } = await supabase.from("posts").select('*').range(0,3);
+      setPosts(data);
+    };
+    getData();
+  }, []);
   return (
-    <section className="bg-[#E1EFE6] p-10">
+    <section className="bg-[#FFFCF7] p-10">
       <div className="grid items-center justify-center md:justify-between md:flex">
         <h1 className="text-4xl font-semibold text-black">
           Nuevas publicaciones
@@ -43,35 +58,25 @@ export const NuevasPublicaciones = () => {
         </div>
       </div>
       <div className="grid justify-between grid-cols-2 gap-12 my-24 justify-items-center md:gap-10 md:flex md:flex-wrap">
-        <div className="grid">
-          <div className="bg-[#AEB7B3] grid border-2 w-32 h-32 md:w-72 md:h-72 rounded-2xl border-slate-200">
-            <img src="/svgs/users.svg" alt="" />
+        {posts?.map((post) => (
+        <div key={post.id} className="grid">
+          <div className="bg-[#AEB7B3] grid w-32 h-32 md:w-72 md:h-[12rem] rounded-2xl border-slate-200">
+            <Image 
+              src={post.photo_url || '/img/placeholder.jpg'} 
+              alt={post.title || 'No Title'}
+              width={600}
+              height={300}
+            />
           </div>
-          <span className="p-2 font-medium text-black">article name</span>
-          <div className="badge bg-[#160C28]">category name</div>
-        </div>
-        <div className="grid">
-          <div className="bg-[#AEB7B3] grid border-2 w-32 h-32 md:w-72 md:h-72 rounded-2xl border-slate-200">
-            <img src="/svgs/users.svg" alt="" />
+          <div className="grid p-2 font-medium text-black">
+            <span className="text-3xl uppercase">{post.title || 'No Title'}</span>
+            <span>{post.price}</span>
+            <span>{post.location}</span>
+            <span className="badge bg-[#160C28]"> {post.category}</span>
           </div>
-          <span className="p-2 font-medium text-black">article name</span>
-          <div className="badge bg-[#160C28]">category name</div>
         </div>
-        <div className="grid">
-          <div className="bg-[#AEB7B3] grid border-2 w-32 h-32 md:w-72 md:h-72 rounded-2xl border-slate-200">
-            <img src="/svgs/users.svg" alt="" />
-          </div>
-          <span className="p-2 font-medium text-black">article name</span>
-          <div className="badge bg-[#160C28]">category name</div>
-        </div>
-        <div className="grid">
-          <div className="bg-[#AEB7B3] grid border-2 w-32 h-32 md:w-72 md:h-72 rounded-2xl border-slate-200">
-            <img src="/svgs/users.svg" alt="" />
-          </div>
-          <span className="p-2 font-medium text-black">article name</span>
-          <div className="badge bg-[#160C28]">category name</div>
-        </div>
+        ))}
       </div>
     </section>
   );
-}
+};

@@ -8,11 +8,11 @@ import {ProductForm} from '../components/Forms/ProductForm';
 export default async function newPost() {
 
   const supabase = createClientComponentClient<Database>()
-
+  
   const {
     data: { user },
   } = await supabase.auth.getUser()
-
+  
 //   async function updateProfile({
 //     username,
 //     fullname,

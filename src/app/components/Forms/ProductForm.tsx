@@ -6,8 +6,15 @@ import type { Database } from '../../../../database.types'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { v4 as uuidv4 } from 'uuid';
 
 type CategoryTable = Database['public']['Tables']['categories']['Row']
+
+const CDNURL = ""
+type FileObject = {
+  // Define the properties of FileObject here
+};
+
 
 export const ProductForm = ({user}: {user: any}) => {
   const supabase = createClientComponentClient<Database>();
@@ -16,10 +23,26 @@ export const ProductForm = ({user}: {user: any}) => {
   const [stateCategory, setStateCategory] = useState<CategoryTable[] | null>(null);
   const [category, setCategory] = useState("");
   const [price, setPrice] = useState("");
-  const [images, setImages] = useState([]);
+  const [images, setImages] = useState<FileObject[]>([]);
   const [condition, setCondition] = useState("");
   const [location, setLocation] = useState("");
   const [isUploading, setIsUploading] = useState(false);
+
+
+
+  async function getImages() {
+    const { data, error } = await supabase.storage.from('images').list(`${user?.id}/`, {
+      limit: 100,
+      offset: 0,
+      sortBy: { column: 'name', order: 'asc' }, 
+    })
+
+    if (data !== null) {
+      setImages(data)
+    } else {
+      console.log(error)
+    }
+  }
 
   useEffect(() => {
     const getData = async () => {
@@ -82,16 +105,20 @@ export const ProductForm = ({user}: {user: any}) => {
   //   }
   // }
 
-  function updateImagesOrder(images: SetStateAction<never[]>) {
-    setImages(images);
+  const uploadFiles = async (ev: any) => {
+  let file = ev.target.files[0]
+  
+  const { data, error } = await supabase.storage.from('images').upload(`${user?.id}/` + uuidv4(), file)
+  
+  if (data) {
+    getImages();
+  } else {
+    console.log(error)
+  }
   }
 
-  // function setProductProp(propName, value) {
-  //   setProductProperties(oldProps => {
-  //     const newProductProps = { ...oldProps };
-  //     newProductProps[propName] = value;
-  //     return newProductProps;
-  //   });
+  // function updateImagesOrder(images: SetStateAction<never[]>) {
+  //   setImages(images);
   // }
 
   return (
@@ -149,7 +176,7 @@ export const ProductForm = ({user}: {user: any}) => {
           </div>
         )}
         <div className="flex flex-wrap gap-1 mb-2">
-          <ReactSortable
+          {/* <ReactSortable
             list={images}
             className="flex flex-wrap gap-1"
             setList={updateImagesOrder}
@@ -163,7 +190,7 @@ export const ProductForm = ({user}: {user: any}) => {
                   <img src={link} alt="" className="rounded-lg" />
                 </div>
               ))}
-          </ReactSortable>
+          </ReactSortable> */}
 
           {isUploading && (
             <div className="flex items-center h-24">
@@ -198,8 +225,9 @@ export const ProductForm = ({user}: {user: any}) => {
             <input
                 className="flex w-full h-10 px-3 py-2 text-sm bg-transparent border rounded-md border-input bg-background ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 id="photos"
-                multiple
+                // multiple
                 type="file"
+                onChange={(ev) => uploadFiles(ev)}
             />
           </div>
         </div>
