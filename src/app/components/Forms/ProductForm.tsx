@@ -10,9 +10,38 @@ import { v4 as uuidv4 } from 'uuid';
 
 type CategoryTable = Database['public']['Tables']['categories']['Row']
 
-const CDNURL = ""
+const CDNURL = "https://ysctqzmvjoqsftxjrvto.supabase.co/storage/v1/object/public/images/"
+// https://ysctqzmvjoqsftxjrvto.supabase.co/storage/v1/object/public/images/6cfca6ca-9faf-415e-a37b-5f9e78fcdb84/6916f813-a71f-4729-b381-3700913b160f
 type FileObject = {
-  // Define the properties of FileObject here
+  created_at: string
+  id: string
+  last_accessed_at: string
+  // metadata: {
+  //   cacheControl
+  //   : 
+  //   "max-age=3600"
+  //   contentLength
+  //   : 
+  //   2469809
+  //   eTag
+  //   : 
+  //   "\"cd857f219347d8c2270cdd6d79c1a579\""
+  //   httpStatusCode
+  //   : 
+  //   200
+  //   lastModified
+  //   : 
+  //   "2024-02-09T18:19:09.000Z"
+  //   mimetype
+  //   : 
+  //   "image/jpeg"
+  //   size
+  //   : 
+  //   2469809
+  // }
+  name: string
+  updated_at: string
+
 };
 
 
@@ -27,11 +56,8 @@ export const ProductForm = ({user}: {user: any}) => {
   const [condition, setCondition] = useState("");
   const [location, setLocation] = useState("");
   const [isUploading, setIsUploading] = useState(false);
-
-
-
   async function getImages() {
-    const { data, error } = await supabase.storage.from('images').list(`${user?.id}/`, {
+    const { data, error } = await supabase.storage.from('images').list(`${user}/`, {
       limit: 100,
       offset: 0,
       sortBy: { column: 'name', order: 'asc' }, 
@@ -59,6 +85,7 @@ export const ProductForm = ({user}: {user: any}) => {
     description,
     price,
     location,
+    user_id,
     category,
     // images,
   }: {
@@ -66,6 +93,7 @@ export const ProductForm = ({user}: {user: any}) => {
     description: string | null
     price: string | null
     location: string | null
+    user_id: string | null
     category: string | null
     // images: string | null
   }) => {
@@ -75,7 +103,7 @@ export const ProductForm = ({user}: {user: any}) => {
         description,
         price: Number(price), // Convert price to a number
         location,
-        user_id: user?.id as string,
+        user_id: user_id as string,
         category: Number(category), // Convert category to a number
         // images,
       })
@@ -108,7 +136,7 @@ export const ProductForm = ({user}: {user: any}) => {
   const uploadFiles = async (ev: any) => {
   let file = ev.target.files[0]
   
-  const { data, error } = await supabase.storage.from('images').upload(`${user?.id}/` + uuidv4(), file)
+  const { data, error } = await supabase.storage.from('images').upload(`${user}/` + uuidv4(), file)
   
   if (data) {
     getImages();
@@ -230,10 +258,11 @@ export const ProductForm = ({user}: {user: any}) => {
                 onChange={(ev) => uploadFiles(ev)}
             />
           </div>
+          {/* <img src={CDNURL + user + "/" images.name} alt="" /> */}
         </div>
         <button
         className="btn"
-        onClick={() => submitPost({ title, description, price, location, category })}
+        onClick={() => submitPost({ title, description, price, location, category, user_id: user})}
         >
         Submit Post
         </button>

@@ -51,10 +51,7 @@ import { MobileMenu } from "./MobileMenu";
           {isLoggedIn ? (
             <div className="hidden gap-2 md:flex">
               <CiHeart size={"4vh"} color="white" />
-              <Link
-                href={"/account"}
-                className="dropdown dropdown-left dropdown-hover"
-              >
+              <div className="dropdown dropdown-left dropdown-hover">
                 <label tabIndex={0}>
                   <CiUser size={"4vh"} color="white" />
                 </label>
@@ -62,6 +59,9 @@ import { MobileMenu } from "./MobileMenu";
                   tabIndex={0}
                   className="dropdown-content z-[1] menu p-2 shadow rounded-box bg-white w-[10vw]"
                 >
+                  <li className="py-2">
+                    <Link href={"/account"}>Account</Link>
+                  </li>
                   <li className="py-2">
                     <Link href={"/newPost"}>Crear publicacion</Link>
                   </li>
@@ -77,7 +77,7 @@ import { MobileMenu } from "./MobileMenu";
                     </button>
                   </li>
                 </ul>
-              </Link>
+              </div>
             </div>
           ) : (
             <div>

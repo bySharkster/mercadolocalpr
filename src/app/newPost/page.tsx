@@ -1,17 +1,12 @@
 import React from 'react'
-import { headers, cookies } from "next/headers";
-import { createClient } from "@/../utils/server";
-import { User, createClientComponentClient } from '@supabase/auth-helpers-nextjs'
-import { Database } from '../../../database.types'
+import { cookies } from "next/headers";
 import {ProductForm} from '../components/Forms/ProductForm';
+import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 
 export default async function newPost() {
 
-  const supabase = createClientComponentClient<Database>()
-  
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  const supabase = createServerComponentClient({cookies});
+  const { data: {session} } = await supabase.auth.getSession();
   
 //   async function updateProfile({
 //     username,
@@ -55,7 +50,7 @@ export default async function newPost() {
             <h2 className="text-3xl font-bold">Create a New Post</h2>
             <p className="text-gray-500 dark:text-gray-400">Fill out the form below to list your item for sale.</p>
         </div>
-        <ProductForm user={user} />
+        <ProductForm user={session?.user.id} />
     </div>
   )
 }
