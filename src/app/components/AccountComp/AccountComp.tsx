@@ -1,12 +1,16 @@
 'use client'
 import { useCallback, useEffect, useState } from 'react'
-import { Database } from '../../../../database.types'
 import { User, createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { toast } from 'react-toastify';
-import axios from 'axios';
+import type { Database } from '../../../../database.types'
+import Link from 'next/link';
+import { motion } from 'framer-motion';
+import Image from 'next/image';
+type PostTable = Database['public']['Tables']['posts']['Row']
 
 export const AccountComp = ({ user }: { user: User | null }) => {
   const supabase = createClientComponentClient<Database>()
+  const [posts, setPosts] = useState<PostTable[] | null>(null);
   const [activeTab, setActiveTab] = useState(false)
   const [activeTab2, setActiveTab2] = useState(false)
   const [activeTab3, setActiveTab3] = useState(true)
@@ -29,24 +33,6 @@ export const AccountComp = ({ user }: { user: User | null }) => {
     } else {
       setPreviewUrl(null);
     }
-  };
-
-  const handleFileUpload = async () => {
-  if (!file) return;
-
-  const formData = new FormData();
-  formData.append('file', file);
-
-  try {
-    const response = await axios.post('/api/upload/upload', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
-    console.log(response.data);
-  } catch (error) {
-    console.error(error);
-  }
   };
 
   const handletab = () => {
@@ -76,7 +62,6 @@ export const AccountComp = ({ user }: { user: User | null }) => {
         .select(`full_name, username, description, profile_image_url, banner_image_url`)
         .eq('id', user?.id ?? '')
         .single()
-      console.log(data)
       if (error && status !== 406) {
         throw error
       }
@@ -98,6 +83,14 @@ export const AccountComp = ({ user }: { user: User | null }) => {
   useEffect(() => {
     getProfile()
   }, [user, getProfile])
+
+  useEffect(() => {
+    const getData = async () => {
+      const { data } = await supabase.from("posts").select('*').eq('user_id', user?.id ?? '');
+      setPosts(data);
+    };
+    getData();
+  }, []);
 
   async function updateProfile({
     username,
@@ -246,41 +239,33 @@ export const AccountComp = ({ user }: { user: User | null }) => {
               : "hidden"
           }
         >
-          <div className="grid col-span-1 gap-4 pr-4 border-r-2">
-            <div className="flex justify-around gap-4">
-              <span>Tech</span>
-              <input type="checkbox" className="checkbox" />
-            </div>
-            <div className="flex justify-around gap-4">
-              <span>Sports</span>
-              <input type="checkbox" className="checkbox" />
-            </div>
-            <div className="flex justify-around gap-4">
-              <span>Mechanic</span>
-              <input type="checkbox" className="checkbox" />
-            </div>
-          </div>
+          {posts?.length === 0 && <div>No posts yet</div>}
+          {posts?.map((post) => (
+            <Link 
+              href={`/editPost/${post.id}`} 
+              key={post.id}
+            >
+              <motion.div 
+              className="w-[38w] md:w-[25vw] lg:w-[15vw] h-[35vh] p-2 bg-white border rounded-md"
+              initial={{ opacity: 0, scale: 0.5 }} // initial state
+              animate={{ opacity: 1, scale: 1 }} // animate to this state
+              transition={{ duration: 0.5 }} // transition duration
 
-          <div className={"grid grid-cols-6 gap-4 cols-span-2"}>
-            <div className="w-32 h-32 p-4 border-2 border-black rounded-md">
-              hi
-            </div>
-            <div className="w-32 h-32 p-4 border-2 border-black rounded-md">
-              hi
-            </div>
-            <div className="w-32 h-32 p-4 border-2 border-black rounded-md">
-              hi
-            </div>
-            <div className="w-32 h-32 p-4 border-2 border-black rounded-md">
-              hi
-            </div>
-            <div className="w-32 h-32 p-4 border-2 border-black rounded-md">
-              hi
-            </div>
-            <div className="w-32 h-32 p-4 border-2 border-black rounded-md">
-              hi
-            </div>
-          </div>
+              >
+                <Image 
+                  src={post.photo_url || '/img/placeholder.jpg'} 
+                  alt={post.title || 'No Title'}
+                  width={600}
+                  height={300}
+                />
+                <div className="grid p-2 font-bold text-black">
+                  <span className="text-2xl uppercase">{post.title || 'No Title'}</span>
+                  <span className="badge bg-[#160C28]">{post.category}</span>
+                </div>
+              </motion.div>
+            </Link>
+            
+          ))}
         </div>
 
         {/* Settings tab */}
@@ -343,7 +328,7 @@ export const AccountComp = ({ user }: { user: User | null }) => {
                   onChange={handleFileChange}
                 />
                 {previewUrl && <img className='h-[30vh] w-[20vw]' src={previewUrl} alt="Preview" />}
-                <button className='btn btn-ghost' onClick={handleFileUpload}>Upload</button>
+                <button className='btn btn-ghost' onClick={() => {console.log('finish this')}}>Upload</button>
               </div>
               <div className="grid gap-4 p-4 border-2 border-gray-300 rounded-md">
                 <div className="flex gap-4">

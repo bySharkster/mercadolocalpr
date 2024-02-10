@@ -1,9 +1,9 @@
 'use client'
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import {useEffect, useState} from 'react'
-import type { Database } from '../../../../database.types'
 import Image from 'next/image';
 import Link from "next/link";
+import type { Database } from '../../../../database.types'
 
 type PostTable = Database['public']['Tables']['posts']['Row']
 
