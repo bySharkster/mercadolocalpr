@@ -140,8 +140,8 @@ export const AccountComp = ({ user }: { user: User | null }) => {
         {/* User Info */}
 
         <div className="grid m-10 font-semibold text-black pl-52">
-          <div>@Username</div>
-          <div>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div>
+          <div className='text-4xl font-bold'>{username}</div>
+          <div className='pt-2 text-lg'>{description}</div>
         </div>
 
         {/* Tab titles */}

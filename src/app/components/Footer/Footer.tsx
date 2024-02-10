@@ -87,7 +87,7 @@ export const Footer = () => {
       </div>
       
       <div className="relative top-[50%]">
-        <p className="text-2xl font-bold text-right flex">
+        <p className="text-md md:text-2xl font-bold text-right flex">
           Copyright © 2024 - Todos los derechos reservados por MercadoLocalPR
         </p>
       </div>

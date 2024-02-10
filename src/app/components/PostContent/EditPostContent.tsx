@@ -4,12 +4,9 @@ import type { Database } from '../../../../database.types'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import Image from 'next/image'
 import { toast } from 'react-toastify'
-type PostTable = Database['public']['Tables']['posts']['Row']
 
 export const EditPostContent = ({id}: {id: number}) => {
-    console.log(id)
   const supabase = createClientComponentClient<Database>();
-  const [postState, setPostState] = useState<PostTable[] | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [title, setTitle] = useState<string | null>(null);
   const [price, setPrice] = useState<number | null>(null);
@@ -18,17 +15,24 @@ export const EditPostContent = ({id}: {id: number}) => {
   const [description, setDescription] = useState<string | null>(null);
   const [category, setCategory] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [user_id, setUser_id] = useState('');
+  const [postId, setPostId] = useState<number | null>(null);
+  const getUserID = async () => {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+    setUser_id(user?.id || '')
+  }
 
-    const getPosts = useCallback(async () => {
+  const getPosts = useCallback(async () => {
     try {
       setLoading(true)
 
       const { data, error, status } = await supabase
         .from('posts')
         .select(`title, description, price, location, photo_url, category`)
-        .eq('user_id', id ?? '')
+        .eq('user_id', user_id ?? '')
         .single()
-        console.log(data)
       if (error && status !== 406) {
         throw error
       }
@@ -39,29 +43,23 @@ export const EditPostContent = ({id}: {id: number}) => {
         setPrice(data.price)
         setLocation(data.location)
         setPhoto_url(data.photo_url)
-        setCategory(data.category.toString())
+        setCategory(data.category)
+        setPostId(data.id)
       }
     } catch (error) {
       toast.error('Error loading post data!');
     } finally {
       setLoading(false)
     }
-  }, [id, supabase])
+  }, [user_id, supabase])
+
+  useEffect(() => {
+    getUserID()
+  }, [])
 
   useEffect(() => {
     getPosts()
-  }, [id, getPosts])
-
-
-  useEffect(() => {
-    const getData = async () => {
-      const { data: posts } = await supabase.from('posts').select('*').eq('id', id)
-        setPostState(posts);
-        setCategory(posts && String(posts[0]?.category) || null);
-    }
-
-    getData()
-  }, [])
+  }, [user_id, getPosts])
 
   async function updatePost({
     title,
@@ -81,15 +79,15 @@ export const EditPostContent = ({id}: {id: number}) => {
     try {
       setLoading(true)
 
-    const { error } = await supabase.from('posts').upsert({
+    const { error } = await supabase.from('posts').update({
         title,
         description,
         price,
         location,
         photo_url,
-        category: category ? Number(category) : null,
-        updated_at: new Date().toISOString()
-    })
+        // category: category ? Number(category) : null,
+        // updated_at: new Date().toISOString()
+    }).select()
       if (error) throw error
       alert('Post updated!')
     } catch (error) {
@@ -99,12 +97,26 @@ export const EditPostContent = ({id}: {id: number}) => {
     }
   }
 
+  async function deletePost(id: number | null) {
+    try {
+      setLoading(true)
+
+      const { error } = await supabase.from('posts').delete().eq('id', id?.toString() || '')
+      if (error) throw error
+      alert('Post deleted!')
+    } catch (error) {
+      alert('Error deleting the post!')
+    } finally {
+      setLoading(false)
+    }
+  }
+
 return (
     <div className='min-h-screen md:flex grid justify-around'>
             <div className='p-10'>
                 <Image 
-                    src={postState && postState[0]?.photo_url || "/img/placeholder.jpg"} 
-                    alt={postState && postState[0]?.title || 'No Title'}             
+                    src={photo_url || "/img/placeholder.jpg"} 
+                    alt={title || 'No Title'}             
                     width={500}
                     height={300}
                     className='rounded-md'
@@ -115,29 +127,37 @@ return (
                 <label className="text-black">Titulo:</label>
                 <input type="text" id="title" value={title ?? ''} className='input mt-2' onChange={(e) => setTitle(e.target.value)}/>
                 <label className="text-black">Precio:</label>
-                <input type="number" id="price" value={(postState && postState[0]?.price) ?? 0} className='input mt-2' onChange={(e) => setPrice(Number(e.target.value))}/>
+                <input type="number" id="price" value={price ?? ''} className='input mt-2' onChange={(e) => setPrice(Number(e.target.value))}/>
                 <label className="text-black">Localizacion:</label>
-                <input type="text" id="location" value={(postState && postState[0]?.location) ?? ''} className='input mt-2' onChange={(e) => setLocation(e.target.value)}/>
+                <input type="text" id="location" value={location ?? ''} className='input mt-2' onChange={(e) => setLocation(e.target.value)}/>
                 <label className="text-black">Descripcion:</label>
-                <textarea id="description" value={(postState && postState[0]?.description) ?? ''} className='rounded-md bg-black' onChange={(e) => setDescription(e.target.value)}/>
+                <textarea id="description" value={description ?? ''} className='rounded-md bg-black' onChange={(e) => setDescription(e.target.value)}/>
                 <label className="text-black">Categoria:</label>
                 <select id="category" className='input'>
-                    
+
                 </select>
-                <button 
-                    type='submit' 
-                    onClick={() => updatePost({        
-                        title,
-                        description,
-                        price,
-                        location,
-                        photo_url,
-                        category
-                    })}
-                    className='btn mt-6'
-                >
-                  save
-                </button>
+                <div className='flex justify-between'>
+                  <button 
+                      type='submit' 
+                      onClick={() => updatePost({        
+                          title,
+                          description,
+                          price,
+                          location,
+                          photo_url,
+                          category
+                      })}
+                      className='btn mt-6 w-[25vw] md:w-[15vw]'
+                  >
+                    save
+                  </button>
+                  <button
+                  className='btn mt-6 w-[25vw] md:w-[15vw]'
+                  onClick={() => deletePost(postId)}
+                  >
+                    delete
+                  </button>
+                </div>
             </form>
     </div>
 )

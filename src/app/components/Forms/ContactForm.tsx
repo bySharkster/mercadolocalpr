@@ -2,7 +2,7 @@
 
 import React, { useRef, useState } from "react";
 import emailjs from "@emailjs/browser";
-
+import { toast } from "react-toastify";
 export const ContactForm = () => {
 //   const formRef = useRef();
   const [form, setForm] = useState({
@@ -27,8 +27,8 @@ export const ContactForm = () => {
 
     emailjs
       .send(
-        process.env.SERVICE_ID,
-        process.env.TEMPLATE_ID,
+        process.env.SERVICE_ID!,
+        process.env.TEMPLATE_ID!,
         {
           from_name: form.name,
           to_name: "Gregor Rodriguez",
@@ -36,18 +36,12 @@ export const ContactForm = () => {
           to_email: "gregorrodriguez@protonmail.com",
           message: form.message,
         },
-        process.env.PUBLIC_KEY
+        process.env.PUBLIC_KEY!
       )
       .then(
         () => {
           setLoading(false);
-          toast({
-            title: "Message sent!",
-            description: "Thank you. I will get back to you as soon as possible.",
-            status: "success",
-            duration: 3000,
-            isClosable: true,
-          });
+          toast.success("Message sent successfully!");
           setForm({
             name: "",
             email: "",
@@ -58,13 +52,7 @@ export const ContactForm = () => {
           setLoading(false);
           console.error(error);
 
-          toast({
-            title: "Error!",
-            description: "Something went wrong. Please try again later.",
-            status: "error",
-            duration: 3000,
-            isClosable: true,
-          });
+          toast.error("Something went wrong. Please try again later.");
         }
       );
   };
