@@ -3,12 +3,16 @@ import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useEffect, useState } from "react";
 import type { Database } from "../../../../database.types";
 import Image from "next/image";
+import Link from "next/link";
+import { motion } from "framer-motion";
 
 type PostTable = Database["public"]["Tables"]["posts"]["Row"];
 
 export const NuevasPublicaciones = () => {
   const supabase = createClientComponentClient<Database>();
   const [posts, setPosts] = useState<PostTable[] | null>(null);
+  const [loadMore, setLoadMore] = useState(4); // Add loadMore state
+
   useEffect(() => {
     const getData = async () => {
       const { data } = await supabase.from("posts").select('*').range(0,3);
@@ -16,66 +20,61 @@ export const NuevasPublicaciones = () => {
     };
     getData();
   }, []);
+  
+  const handleLoadMore = async () => {
+
+    //  needs improvement vv
+
+    setLoadMore(loadMore + 4);
+    if (loadMore > 12) {
+      setLoadMore(12);
+    }
+
+    // needs improvement ^^ 
+
+    const { data } = await supabase.from("posts").select('*').range(0, loadMore);
+    setPosts(data);
+  }
+
   return (
     <section className="bg-[#FFFCF7] p-10">
-      <div className="grid items-center justify-center md:justify-between md:flex">
+      <div className="grid items-center justify-center">
         <h1 className="text-4xl font-semibold text-black">
-          Nuevas publicaciones
+          Chekea nuestras nuevas publicaciones
         </h1>
-        <div className="flex justify-between gap-5 pt-10 md:pt-0">
-          <button className="btn-custom">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="w-6 h-6"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
-              />
-            </svg>
-          </button>
-          <button className="btn-custom">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="w-6 h-6"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
-              />
-            </svg>
-          </button>
-        </div>
       </div>
-      <div className="grid justify-between grid-cols-2 gap-12 my-24 justify-items-center md:gap-10 md:flex md:flex-wrap">
+      <div className="grid justify-between grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-12 my-24 justify-items-center md:gap-10">
         {posts?.map((post) => (
-        <div key={post.id} className="grid">
-          <div className="bg-[#AEB7B3] grid w-32 h-32 md:w-72 md:h-[12rem] rounded-2xl border-slate-200">
-            <Image 
-              src={post.photo_url || '/img/placeholder.jpg'} 
-              alt={post.title || 'No Title'}
-              width={600}
-              height={300}
-            />
-          </div>
-          <div className="grid p-2 font-medium text-black">
-            <span className="text-3xl uppercase">{post.title || 'No Title'}</span>
-            <span>{post.price}</span>
-            <span>{post.location}</span>
-            <span className="badge bg-[#160C28]"> {post.category}</span>
-          </div>
-        </div>
+          <Link 
+            href={`/post/${post.id}`} 
+            key={post.id}
+          >
+            <motion.div 
+            className="w-[38w] md:w-[25vw] lg:w-[15vw] h-[35vh] p-2 bg-white border rounded-md"
+            initial={{ opacity: 0, scale: 0.5 }} // initial state
+            animate={{ opacity: 1, scale: 1 }} // animate to this state
+            transition={{ duration: 0.5 }} // transition duration
+
+            >
+              <Image 
+                src={post.photo_url || '/img/placeholder.jpg'} 
+                alt={post.title || 'No Title'}
+                width={600}
+                height={300}
+              />
+              <div className="grid p-2 font-bold text-black">
+                <span className="text-2xl uppercase">{post.title || 'No Title'}</span>
+                <span className="badge bg-[#160C28]">{post.category}</span>
+              </div>
+            </motion.div>
+          </Link>
+          
         ))}
+      </div>
+      <div className="flex items-center justify-center">
+        <button className="btn" onClick={handleLoadMore}>
+          Load More
+        </button>
       </div>
     </section>
   );

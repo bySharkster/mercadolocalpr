@@ -285,3 +285,46 @@
     transform: translateX(var(--end));
   }
 }
+
+.top-of-promotions {
+  position: relative;
+  top: 0;
+  left: 0;
+  width: 100%;
+  overflow: hidden;
+  line-height: 0;
+  transform: rotate(180deg);
+  background-color: #E4F0D0;
+}
+
+.top-of-promotions svg {
+  position: relative;
+  display: block;
+  width: calc(265% + 1.3px);
+  height: 42px;
+}
+
+.top-of-promotions .shape-fill {
+  fill: #E1DEE3;
+}
+
+.bottom-of-promotions {
+  position: relative;
+  top: 0;
+  left: 0;
+  width: 100%;
+  overflow: hidden;
+  line-height: 0;
+  background-color: #E4F0D0;
+}
+
+.bottom-of-promotions svg {
+  position: relative;
+  display: block;
+  width: calc(265% + 1.3px);
+  height: 42px;
+}
+
+.bottom-of-promotions .shape-fill {
+  fill: white;
+}

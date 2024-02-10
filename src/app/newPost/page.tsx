@@ -7,42 +7,6 @@ export default async function newPost() {
 
   const supabase = createServerComponentClient({cookies});
   const { data: {session} } = await supabase.auth.getSession();
-  
-//   async function updateProfile({
-//     username,
-//     fullname,
-//     description,
-//     profile_image_url,
-//     banner_image_url,
-//   }: {
-//     username: string | null
-//     fullname: string | null
-//     description: string | null
-//     profile_image_url: string | null
-//     banner_image_url: string | null
-//   }) {
-//     try {
-//     //   setLoading(true)
-
-//       const { error } = await supabase.from('profiles').upsert({
-//         id: user?.id as string,
-//         full_name: fullname,
-//         username,
-//         description,
-//         profile_image_url,
-//         banner_image_url,
-//         updated_at: new Date().toISOString(),
-//       })
-//       if (error) throw error
-//       alert('Profile updated!')
-//     } catch (error) {
-//       alert('Error updating the data!')
-//     } finally {
-//     //   setLoading(false)
-//     console.log("updated Profile")
-//     }
-//   }
-
 
   return (
     <div className="space-y-8 p-10">

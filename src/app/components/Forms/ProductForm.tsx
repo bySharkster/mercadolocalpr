@@ -56,15 +56,17 @@ export const ProductForm = ({user}: {user: any}) => {
   const [condition, setCondition] = useState("");
   const [location, setLocation] = useState("");
   const [isUploading, setIsUploading] = useState(false);
+  let imageUrl: string;
   async function getImages() {
     const { data, error } = await supabase.storage.from('images').list(`${user}/`, {
       limit: 100,
       offset: 0,
       sortBy: { column: 'name', order: 'asc' }, 
     })
-
+    console.log(data)
     if (data !== null) {
-      setImages(data)
+      setImages(data);
+      imageUrl = CDNURL + user + "/" + images[1]?.name;
     } else {
       console.log(error)
     }
@@ -74,7 +76,6 @@ export const ProductForm = ({user}: {user: any}) => {
     const getData = async () => {
       const { data } = await supabase.from('categories').select()
       setStateCategory(data)
-      console.log(data)
     }
 
     getData()
@@ -87,7 +88,7 @@ export const ProductForm = ({user}: {user: any}) => {
     location,
     user_id,
     category,
-    // images,
+    photo_url,
   }: {
     title: string | null
     description: string | null
@@ -95,7 +96,7 @@ export const ProductForm = ({user}: {user: any}) => {
     location: string | null
     user_id: string | null
     category: string | null
-    // images: string | null
+    photo_url: string | null
   }) => {
     try {
       const { error } = await supabase.from('posts').insert({
@@ -105,7 +106,7 @@ export const ProductForm = ({user}: {user: any}) => {
         location,
         user_id: user_id as string,
         category: Number(category), // Convert category to a number
-        // images,
+        photo_url,
       })
       if (error) throw error
       alert('Post created!')
@@ -258,11 +259,11 @@ export const ProductForm = ({user}: {user: any}) => {
                 onChange={(ev) => uploadFiles(ev)}
             />
           </div>
-          {/* <img src={CDNURL + user + "/" images.name} alt="" /> */}
+          <img src={CDNURL + user + "/" + images[1]?.name} alt="" />
         </div>
         <button
         className="btn"
-        onClick={() => submitPost({ title, description, price, location, category, user_id: user})}
+        onClick={() => submitPost({ title, description, price, location, category, user_id: user, photo_url: imageUrl})}
         >
         Submit Post
         </button>
