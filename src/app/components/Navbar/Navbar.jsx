@@ -59,22 +59,24 @@ import { MobileMenu } from "./MobileMenu";
                   tabIndex={0}
                   className="dropdown-content z-[1] menu p-2 shadow rounded-box bg-white w-[10vw]"
                 >
-                  <li className="py-2">
+                  <li className="py-2 mr-auto w-[9vw]">
                     <Link href={"/account"}>Account</Link>
                   </li>
-                  <li className="py-2">
+                  <li className="py-2 mr-auto w-[9vw]">
                     <Link href={"/newPost"}>Crear publicacion</Link>
                   </li>
-                  <li className="py-2">
+                  <li className="py-2 mr-auto w-[9vw]">
                     <Link href={"/account#settings"}>Settings</Link>
                   </li>
-                  <li className="py-2">
-                    <button
-                      className="p-2 flex justify-center items-center w-full rounded-md bg-[#3A4F41] text-white hover:bg-[black] transition-all"
-                      onClick={() => setIsLoggedIn(false)}
-                    >
-                      Log out
-                    </button>
+                  <li className="py-2 mr-auto w-[9vw]">
+                    <form action="/auth/signout" method="post">
+                      <button
+                        className="p-2 flex justify-center items-center w-[8vw] rounded-md bg-[#3A4F41] text-white hover:bg-[black] transition-all"
+                        type="submit"
+                      >
+                        Log out
+                      </button>
+                    </form>
                   </li>
                 </ul>
               </div>
@@ -91,7 +93,7 @@ import { MobileMenu } from "./MobileMenu";
               </Link>
             </div>
           )}
-          <MobileMenu isLoggedIn={isLoggedIn}/>
+          <MobileMenu isLoggedIn={isLoggedIn} />
         </div>
         <div className="p-3 bg-white ">
           <NavLinks />

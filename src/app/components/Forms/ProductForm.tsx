@@ -117,33 +117,17 @@ export const ProductForm = ({user}: {user: any}) => {
       console.log("created Post")
     }
   };
-     
-  // async function uploadImages(ev) {
-  //   const files = ev.target?.files;
-  //   if (files?.length > 0) {
-  //     setIsUploading(true);
-  //     const data = new FormData();
-  //     for (const file of files) {
-  //       data.append('file', file);
-  //     }
-  //     const res = await axios.post('/api/upload', data);
-  //     setImages(oldImages => {
-  //       return [...oldImages, ...res.data.links];
-  //     });
-  //     setIsUploading(false);
-  //   }
-  // }
 
   const uploadFiles = async (ev: any) => {
-  let file = ev.target.files[0]
-  
-  const { data, error } = await supabase.storage.from('images').upload(`${user}/` + uuidv4(), file)
-  
-  if (data) {
-    getImages();
-  } else {
-    console.log(error)
-  }
+    let file = ev.target.files[0]
+    
+    const { data, error } = await supabase.storage.from('images').upload(`${user}/` + uuidv4(), file)
+    
+    if (data) {
+      getImages();
+    } else {
+      console.log(error)
+    }
   }
 
   // function updateImagesOrder(images: SetStateAction<never[]>) {
