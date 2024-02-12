@@ -58,7 +58,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
           </div>
         </div>
         <div className="grid grid-cols-2 gap-10 lg:grid-cols-4">
-          <CatPosts/>
+          <CatPosts slug={slug}/>
         </div>
       </div>
     </div>

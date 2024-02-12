@@ -42,6 +42,8 @@ type FileObject = {
   updated_at: string
 
 };
+
+
 export const AccountComp = ({ user }: { user: User | null }) => {
   const supabase = createClientComponentClient<Database>()
   const [posts, setPosts] = useState<PostTable[] | null>(null);
@@ -58,6 +60,7 @@ export const AccountComp = ({ user }: { user: User | null }) => {
   const [images, setImages] = useState<FileObject[]>([]);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const router = useRouter();
+  let imageUrl: string;
   // const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
   //   const file = event.target.files ? event.target.files[0] : null;
   //   setFile(file);

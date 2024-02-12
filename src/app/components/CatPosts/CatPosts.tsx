@@ -7,15 +7,26 @@ import type { Database } from '../../../../database.types'
 
 type PostTable = Database['public']['Tables']['posts']['Row']
 
-export const CatPosts = () => {
+export const CatPosts = ({slug}: any) => {
   const supabase = createClientComponentClient<Database>();
   const [posts, setPosts] = useState<PostTable[] | null>(null);
+  const [category, setCategory] = useState<{ id: number; }[]>([]);;
+
   useEffect(() => {
     const getData = async () => {
       const { data } = await supabase.from("posts").select('*');
       setPosts(data);
     };
     getData();
+  }, []);
+
+  useEffect(() => { 
+    const getCategory = async () => {
+      const { data } = await supabase.from("categories").select('id').eq('category_name', slug);
+      setCategory(data || []);
+      console.log(category);
+    };
+    getCategory();
   }, []);
   return (
     <>
