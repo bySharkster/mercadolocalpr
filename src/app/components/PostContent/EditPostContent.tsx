@@ -43,8 +43,8 @@ export const EditPostContent = ({id}: {id: number}) => {
         setPrice(data.price)
         setLocation(data.location)
         setPhoto_url(data.photo_url)
-        setCategory(data.category)
-        setPostId(data.id)
+        // setCategory(data.category)
+        // setPostId(data.id)
       }
     } catch (error) {
       toast.error('Error loading post data!');
