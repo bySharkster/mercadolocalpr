@@ -1,6 +1,22 @@
 import {CatPosts} from "../../components/CatPosts/CatPosts";
 export default async function Page({ params }: { params: { slug: string } }) {
   const { slug } = params;
+  let catID = 0;
+  if (slug === 'Bienes-Raices') {
+    catID = 7;
+  } else if (slug === 'Vehiculos') {
+    catID = 1;
+  } else if (slug === 'Mascotas') {
+    catID = 2;
+  } else if (slug === 'Articulos') {
+    catID = 3;
+  } else if (slug === 'Servicios') {
+    catID = 5;
+  } else if (slug === 'Empleos') {
+    catID = 4;
+  } else if (slug === 'Otros') {
+    catID = 6;
+  }
   
   return (
     <div className="min-h-screen text-black bg-white">
@@ -58,7 +74,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
           </div>
         </div>
         <div className="grid grid-cols-2 gap-10 lg:grid-cols-4">
-          <CatPosts slug={slug}/>
+          <CatPosts catID={catID}/>
         </div>
       </div>
     </div>
