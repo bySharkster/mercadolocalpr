@@ -134,6 +134,8 @@ export const AccountComp = ({ user }: { user: User | null }) => {
     }
   })
 
+  // change 2 functions below
+
   const handleUsernameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newUsername = event.target.value;
     if (newUsername.length > 12) {
@@ -154,13 +156,11 @@ export const AccountComp = ({ user }: { user: User | null }) => {
 
   async function updateProfile({
     username,
-    fullname,
     description,
     profile_image_url,
     banner_image_url,
   }: {
     username: string | null
-    fullname: string | null
     description: string | null
     profile_image_url: string | null
     banner_image_url: string | null
@@ -170,7 +170,6 @@ export const AccountComp = ({ user }: { user: User | null }) => {
 
       const { error } = await supabase.from('profiles').upsert({
         id: user?.id as string,
-        full_name: fullname,
         username,
         description,
         profile_image_url,
@@ -364,7 +363,7 @@ export const AccountComp = ({ user }: { user: User | null }) => {
         <div
           className={
             activeTab3 === true
-              ? `p-10 bg-white mt-4 rounded-lg w-[100%] md:w-[50%] m-auto`
+              ? `p-10 bg-white mt-4 rounded-lg w-[100%] md:w-[90vw] flex justify-between`
               : "hidden"
           }
         >
@@ -390,7 +389,7 @@ export const AccountComp = ({ user }: { user: User | null }) => {
             <textarea
               className="bg-white border-2 border-black input input-bordered min-h-[100px]"
               value={description ?? ''}
-              onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => handleDescriptionChange(event)}
+              onChange={ev => setDescription(ev.target.value)}
             />
             <div className="pt-5">
               <div className="grid gap-4 p-4 border-2 border-gray-300 rounded-md">
@@ -447,13 +446,17 @@ export const AccountComp = ({ user }: { user: User | null }) => {
             <div className='flex justify-between pt-10'>
               <button
                 className="btn w-[100%]"
-                onClick={() => updateProfile({ fullname, username, profile_image_url: profileImageUrl, banner_image_url: bannerImageUrl, description})}
+                onClick={() => updateProfile({ username, profile_image_url: profileImageUrl, banner_image_url: bannerImageUrl, description})}
                 disabled={loading}
               >
                 {loading ? 'Loading ...' : 'Update'}
               </button>
             </div>
           </form>
+          <div>
+            <h1>Upgrade account?</h1>
+            <span>Experimental</span>
+          </div>
         </div>
       </div>
       <ToastContainer />
