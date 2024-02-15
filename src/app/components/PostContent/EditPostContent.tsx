@@ -3,7 +3,10 @@ import {useCallback, useEffect, useState} from 'react'
 import type { Database } from '../../../../database.types'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import Image from 'next/image'
-import { toast } from 'react-toastify'
+import { ToastContainer, toast } from 'react-toastify'
+import "react-toastify/dist/ReactToastify.css";
+
+type CategoryTable = Database['public']['Tables']['categories']['Row']
 
 export const EditPostContent = ({id}: {id: number}) => {
   const supabase = createClientComponentClient<Database>();
@@ -17,6 +20,9 @@ export const EditPostContent = ({id}: {id: number}) => {
   const [loading, setLoading] = useState(false);
   const [user_id, setUser_id] = useState('');
   const [postId, setPostId] = useState<number | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [stateCategory, setStateCategory] = useState<CategoryTable[] | null>(null);
+
   const getUserID = async () => {
     const {
       data: { user },
@@ -31,8 +37,9 @@ export const EditPostContent = ({id}: {id: number}) => {
       const { data, error, status } = await supabase
         .from('posts')
         .select(`title, description, price, location, photo_url, category`)
-        .eq('user_id', user_id ?? '')
+        .eq('id', id)
         .single()
+        console.log(data)
       if (error && status !== 406) {
         throw error
       }
@@ -61,6 +68,15 @@ export const EditPostContent = ({id}: {id: number}) => {
     getPosts()
   }, [user_id, getPosts])
 
+  useEffect(() => {
+  const getData = async () => {
+    const { data } = await supabase.from('categories').select()
+    setStateCategory(data)
+  }
+
+  getData()
+  }, [])
+
   async function updatePost({
     title,
     description,
@@ -87,7 +103,7 @@ export const EditPostContent = ({id}: {id: number}) => {
         photo_url,
         // category: category ? Number(category) : null,
         // updated_at: new Date().toISOString()
-    }).select()
+    })
       if (error) throw error
       alert('Post updated!')
     } catch (error) {
@@ -111,6 +127,19 @@ export const EditPostContent = ({id}: {id: number}) => {
     }
   }
 
+  const onSubmit = async (ev: any) => {
+    ev.preventDefault();
+    if (!title || !description || !price || !location || !category) { // Add condition for images later
+      toast.error('Please fill in all fields');
+      return;
+    } else {
+      setIsUploading(true);
+      updatePost({ title, description, price, location, photo_url, category})
+      toast.success('Post created!')
+    }
+    setIsUploading(false);
+  }
+
 return (
     <div className='min-h-screen md:flex grid justify-around'>
             <div className='p-10'>
@@ -123,7 +152,7 @@ return (
                 />
                 <input type="file" id="file" className='mt-10 border p-2 rounded-md'/>
             </div>
-            <form className='p-10 m-10 grid border rounded-md w-[94vw] md:w-[40vw]'>
+            <form onSubmit={onSubmit} className='p-10 m-10 grid border rounded-md w-[94vw] md:w-[40vw]'>
                 <label className="text-black">Titulo:</label>
                 <input type="text" id="title" value={title ?? ''} className='input mt-2' onChange={(e) => setTitle(e.target.value)}/>
                 <label className="text-black">Precio:</label>
@@ -133,20 +162,19 @@ return (
                 <label className="text-black">Descripcion:</label>
                 <textarea id="description" value={description ?? ''} className='rounded-md bg-black' onChange={(e) => setDescription(e.target.value)}/>
                 <label className="text-black">Categoria:</label>
-                <select id="category" className='input'>
-
+                <select 
+                  className="input"
+                  value={category ?? ''}
+                  onChange={(ev) => setCategory(ev.target.value)}
+                >
+                  <option value={""}>Seleccione una categoria</option>
+                  {stateCategory?.map((category) => (
+                    <option key={category.id} value={category.id}>{category.category_name}</option>
+                  ))}
                 </select>
                 <div className='flex justify-between'>
                   <button 
                       type='submit' 
-                      onClick={() => updatePost({        
-                          title,
-                          description,
-                          price,
-                          location,
-                          photo_url,
-                          category
-                      })}
                       className='btn mt-6 w-[25vw] md:w-[15vw]'
                   >
                     save
@@ -159,6 +187,7 @@ return (
                   </button>
                 </div>
             </form>
+            <ToastContainer/>
     </div>
 )
 }

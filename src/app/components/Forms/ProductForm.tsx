@@ -7,6 +7,7 @@ import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { v4 as uuidv4 } from 'uuid';
+import { useRouter } from 'next/navigation'
 
 type CategoryTable = Database['public']['Tables']['categories']['Row']
 
@@ -56,7 +57,9 @@ export const ProductForm = ({user}: {user: any}) => {
   const [condition, setCondition] = useState("");
   const [location, setLocation] = useState("");
   const [isUploading, setIsUploading] = useState(false);
+  const [isDisabled, setIsDisabled] = useState(false);
   let imageUrl: string;
+  const router = useRouter()
   async function getImages() {
     const { data, error } = await supabase.storage.from('images').list(`${user}/`, {
       limit: 100,
@@ -79,6 +82,20 @@ export const ProductForm = ({user}: {user: any}) => {
     }
 
     getData()
+  }, [])
+
+  useEffect(() => {
+    if (category === "Mascotas") {
+      setIsDisabled(true);
+    } else if (category === "Empleos") {
+      setIsDisabled(true);
+    } else if (category === "Servicios") {
+      setIsDisabled(true);
+    } else if (category === "Otros"){
+      setIsDisabled(true);
+    } else {
+      setIsDisabled(false);
+    }
   }, [])
  
   const submitPost = async ({
@@ -105,22 +122,19 @@ export const ProductForm = ({user}: {user: any}) => {
         price: Number(price), // Convert price to a number
         location,
         user_id: user_id as string,
-        category: Number(category), // Convert category to a number
+        category: Number(category) ?? 6, // Convert category to a number and default to 6
         photo_url,
       })
       if (error) throw error
       alert('Post created!')
-
+      router.push('/account')
     } catch (error) {
       toast.error('Error creating the post!')
-    } finally {
-      console.log("created Post")
     }
   };
 
   const uploadFiles = async (ev: any) => {
     let file = ev.target.files[0]
-    
     const { data, error } = await supabase.storage.from('images').upload(`${user}/` + uuidv4(), file)
     
     if (data) {
@@ -134,21 +148,35 @@ export const ProductForm = ({user}: {user: any}) => {
   //   setImages(images);
   // }
 
+  const onSubmit = async (ev: any) => {
+    ev.preventDefault();
+    if (!title || !description || !price || !location || !category) { // Add condition for images later
+      toast.error('Please fill in all fields');
+      return;
+    } else {
+      setIsUploading(true);
+      submitPost({ title, description, price, location, category, user_id: user, photo_url: imageUrl})
+      toast.success('Post created!')
+    }
+    setIsUploading(false);
+  }
+
   return (
     <>
-      <div className="grid">
+      <form onSubmit={onSubmit} className="grid m-auto border-2 border-[#3A4F41] rounded-md p-10 bg-white w-[50%]">
         <input
           type="text"
           placeholder="Nombre del articulo"
           className="p-3 bg-white border-2 rounded-md"
           value={title}
-          onChange={(ev) => setTitle(ev.target.value)}
+          onChange={ev => setTitle(ev.target.value)}
         />
         <select 
           className="p-3 my-3 bg-white border-2 rounded-md"
           value={category}
           onChange={(ev) => setCategory(ev.target.value)}
         >
+          <option value={""}>Seleccione una categoria</option>
           {stateCategory?.map((category) => (
             <option key={category.id} value={category.id}>{category.category_name}</option>
           ))}
@@ -176,6 +204,7 @@ export const ProductForm = ({user}: {user: any}) => {
         <select
           className="p-3 my-3 bg-white border-2 rounded-md"
           value={condition}
+          disabled={isDisabled}
           onChange={(ev) => setCondition(ev.target.value)}
         >
           <option value="new">Nuevo</option>
@@ -246,12 +275,13 @@ export const ProductForm = ({user}: {user: any}) => {
           <img src={CDNURL + user + "/" + images[1]?.name} alt="" />
         </div>
         <button
-        className="btn"
-        onClick={() => submitPost({ title, description, price, location, category, user_id: user, photo_url: imageUrl})}
+          className="btn bg-[#3A4F41] text-white font-bold hover:bg-[#A1B5D8] hover:border-0"
+          disabled={isUploading}
+          type="submit"
         >
-        Submit Post
+        {!isUploading ? "Submit Post" : "Uploading..."}
         </button>
-      </div>
+      </form>
       <ToastContainer />
     </>
   );

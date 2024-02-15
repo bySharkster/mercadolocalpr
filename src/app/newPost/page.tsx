@@ -9,10 +9,10 @@ export default async function newPost() {
   const { data: {session} } = await supabase.auth.getSession();
 
   return (
-    <div className="space-y-8 p-10">
-        <div className="space-y-2">
-            <h2 className="text-3xl font-bold">Create a New Post</h2>
-            <p className="text-gray-500 dark:text-gray-400">Fill out the form below to list your item for sale.</p>
+    <div className="space-y-8 p-10 bg-[#A1B5D8]">
+        <div className="space-y-2 text-center">
+            <h2 className="text-4xl font-bold text-white">Create a New Post</h2>
+            <p className="text-white">Fill out the form below to list your item for sale.</p>
         </div>
         <ProductForm user={session?.user.id} />
     </div>

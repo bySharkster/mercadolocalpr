@@ -11,10 +11,10 @@ export const Footer = () => {
           Contáctanos
         </span>
         <div className="grid gap-4 text-center md:text-left pt-10">
-          <Link className="font-bold hover:text-lg transition-all" href="/">
+          <Link className="font-bold" href="/">
             Ventas
           </Link>
-          <Link className="font-bold hover:text-lg transition-all" href="/empleos">
+          <Link className="font-bold" href="/empleos">
             Trabaja con nosotros
           </Link>
           <div className="grid grid-flow-col gap-4 pt-10">
@@ -54,13 +54,13 @@ export const Footer = () => {
           Publicidad
         </span>
         <div className="grid gap-4 text-center md:text-left pt-10">
-          <Link className="font-bold hover:text-lg transition-all" href="/">
+          <Link className="font-bold" href="/">
             Anunciate
           </Link>
-          <Link className="font-bold hover:text-lg transition-all" href="/">
+          <Link className="font-bold" href="/">
             Asociate
           </Link>
-          <Link className="font-bold hover:text-lg transition-all" href="/">
+          <Link className="font-bold" href="/">
             Eventos
           </Link>
         </div>
@@ -71,16 +71,16 @@ export const Footer = () => {
           Ayuda
         </span>
         <div className="grid gap-4 text-center md:text-left pt-10">
-          <Link className="font-bold hover:text-lg transition-all" href="/">
+          <Link className="font-bold" href="/">
             Usuario
           </Link>
-          <Link className="font-bold hover:text-lg transition-all" href="/">
+          <Link className="font-bold" href="/">
             Politicas de Privacidad
           </Link>
-          <Link className="font-bold hover:text-lg transition-all" href="/">
+          <Link className="font-bold" href="/">
             Reembolso - Terminos
           </Link>
-          <Link className="font-bold hover:text-lg transition-all" href="/">
+          <Link className="font-bold" href="/">
             Alerta al fraude
           </Link>
         </div>

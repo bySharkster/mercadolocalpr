@@ -1,7 +1,7 @@
 'use client'
 import { useCallback, useEffect, useState } from 'react'
 import { User, createClientComponentClient } from '@supabase/auth-helpers-nextjs'
-import { toast } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
 import type { Database } from '../../../../database.types'
 import Link from 'next/link';
 import { motion } from 'framer-motion';
@@ -51,7 +51,6 @@ export const AccountComp = ({ user }: { user: User | null }) => {
   const [activeTab2, setActiveTab2] = useState(false)
   const [activeTab3, setActiveTab3] = useState(true)
   const [loading, setLoading] = useState(true)
-  const [fullname, setFullname] = useState<string | null>(null)
   const [username, setUsername] = useState<string | null>(null)
   const [profileImageUrl, setprofileImageUrl] = useState<string | null>(null)
   const [bannerImageUrl, setbannerImageUrl] = useState<string | null>(null)
@@ -105,7 +104,6 @@ export const AccountComp = ({ user }: { user: User | null }) => {
       }
 
       if (data) {
-        setFullname(data.full_name)
         setUsername(data.username)
         setDescription(data.description)
         setprofileImageUrl(data.profile_image_url)
@@ -135,6 +133,24 @@ export const AccountComp = ({ user }: { user: User | null }) => {
       router.push('/');
     }
   })
+
+  const handleUsernameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newUsername = event.target.value;
+    if (newUsername.length > 12) {
+      toast.error('Username cannot be longer than 12 characters!');
+    } else {
+      setUsername(newUsername);
+    }
+  };
+
+  const handleDescriptionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newDescription = event.target.value;
+    if (newDescription.length > 100) {
+      toast.error('Description cannot be longer than 100 characters!');
+    } else {
+      setDescription(newDescription);
+    }
+  }
 
   async function updateProfile({
     username,
@@ -313,7 +329,7 @@ export const AccountComp = ({ user }: { user: User | null }) => {
               <option value="other">Other</option>
             </select>
           </div>
-          <div className='flex justify-evenly p-10 bg-white mt-4 rounded-lg m-auto'>
+          <div className='flex justify-evenly p-10 bg-white mt-4 rounded-lg m-auto gap-12'>
             {posts?.length === 0 && <div>No posts yet</div>}
             {posts?.map((post) => (
               <Link 
@@ -348,11 +364,11 @@ export const AccountComp = ({ user }: { user: User | null }) => {
         <div
           className={
             activeTab3 === true
-              ? `grid p-10 bg-white mt-4 rounded-lg w-[100%] md:w-[50%] m-auto`
+              ? `p-10 bg-white mt-4 rounded-lg w-[100%] md:w-[50%] m-auto`
               : "hidden"
           }
         >
-          <div className="grid gap-4 a-auto">
+          <form className="grid gap-4">
             <h1 className='text-4xl font-bold text-black'>Perfil</h1>
             <span className='text-slate-500'>Actualiza tu informacion. Los cambios se veran reflejados en la plataforma.</span>
             <label htmlFor="email">Correo Electronico</label>
@@ -368,78 +384,79 @@ export const AccountComp = ({ user }: { user: User | null }) => {
               type="text"
               className="bg-white border-2 border-black input input-bordered"
               value={username ?? ''}
-              onChange={(e) => setUsername(e.target.value)}
+              onChange={handleUsernameChange}
             />
             <label htmlFor="Description">Descripcion</label>
             <textarea
               className="bg-white border-2 border-black input input-bordered min-h-[100px]"
               value={description ?? ''}
-              onChange={(e) => setDescription(e.target.value)}
+              onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => handleDescriptionChange(event)}
             />
-          </div>
-          <div className="pt-5">
-            <div className="grid gap-4 p-4 border-2 border-gray-300 rounded-md">
-              <div className="flex gap-4">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="w-6 h-6"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"
-                  />
-                </svg>
-                <span>User Profile</span>
+            <div className="pt-5">
+              <div className="grid gap-4 p-4 border-2 border-gray-300 rounded-md">
+                <div className="flex gap-4">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="w-6 h-6"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"
+                    />
+                  </svg>
+                  <span>User Profile</span>
+                </div>
+                <input
+                  type="file"
+                  className="w-full max-w-xs bg-white border-2 border-black file-input file-input-bordered"
+                  onChange={(ev) => uploadFiles(ev)}
+                />
+                {previewUrl && <img className='h-[30vh] w-[20vw]' src={previewUrl} alt="Preview" />}
               </div>
-              <input
-                type="file"
-                className="w-full max-w-xs bg-white border-2 border-black file-input file-input-bordered"
-                onChange={(ev) => uploadFiles(ev)}
-              />
-              {previewUrl && <img className='h-[30vh] w-[20vw]' src={previewUrl} alt="Preview" />}
-            </div>
-            <div className="grid gap-4 p-4 border-2 border-gray-300 rounded-md mt-5">
-              <div className="flex gap-4">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="w-6 h-6"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"
-                  />
-                </svg>
-                <span>Banner Profile</span>
-              </div>
+              <div className="grid gap-4 p-4 border-2 border-gray-300 rounded-md mt-5">
+                <div className="flex gap-4">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="w-6 h-6"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"
+                    />
+                  </svg>
+                  <span>Banner Profile</span>
+                </div>
 
-              <input
-                type="file"
-                className="w-full max-w-xs bg-white border-2 border-black file-input file-input-bordered"
-                onChange={(ev) => uploadFiles(ev)}
-              />
+                <input
+                  type="file"
+                  className="w-full max-w-xs bg-white border-2 border-black file-input file-input-bordered"
+                  onChange={(ev) => uploadFiles(ev)}
+                />
+              </div>
             </div>
-          </div>
-          <div className='flex justify-between pt-10'>
-            <button
-              className="btn w-[100%]"
-              onClick={() => updateProfile({ fullname, username, profile_image_url: profileImageUrl, banner_image_url: bannerImageUrl, description})}
-              disabled={loading}
-            >
-              {loading ? 'Loading ...' : 'Update'}
-            </button>
-          </div>
+            <div className='flex justify-between pt-10'>
+              <button
+                className="btn w-[100%]"
+                onClick={() => updateProfile({ fullname, username, profile_image_url: profileImageUrl, banner_image_url: bannerImageUrl, description})}
+                disabled={loading}
+              >
+                {loading ? 'Loading ...' : 'Update'}
+              </button>
+            </div>
+          </form>
         </div>
       </div>
+      <ToastContainer />
     </div>
   );
 }

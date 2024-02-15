@@ -50,7 +50,7 @@ export const NuevasPublicaciones = () => {
             key={post.id}
           >
             <motion.div 
-            className="w-[38w] md:w-[25vw] lg:w-[15vw] h-[35vh] p-2 bg-white border rounded-md"
+            className="w-[38w] md:w-[25vw] lg:w-[15vw] h-[35vh] card bg-[#C2D8B9]"
             initial={{ opacity: 0, scale: 0.5 }} // initial state
             animate={{ opacity: 1, scale: 1 }} // animate to this state
             transition={{ duration: 0.5 }} // transition duration
@@ -61,11 +61,13 @@ export const NuevasPublicaciones = () => {
                 alt={post.title || 'No Title'}
                 width={600}
                 height={300}
+                className="border-2 rounded-md border-[#A1B5D8] hover:border-[#3A4F41] transition-all"
               />
-              <div className="grid p-2 font-bold text-black">
+              <div className="card-details">
                 <span className="text-2xl uppercase">{post.title || 'No Title'}</span>
                 <span className="badge bg-[#160C28]">{post.category}</span>
               </div>
+              <button className="card-button">More info</button>
             </motion.div>
           </Link>
           
