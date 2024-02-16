@@ -4,6 +4,8 @@ import { Footer } from './components/Footer/Footer'
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
 import { cookies } from 'next/headers'
 import { Database } from '../../database.types'
+import { DefaultSeo } from "next-seo";
+import SEO from "../../next-seo.config";
 
 import { Metadata } from 'next'
  
@@ -28,6 +30,7 @@ export default async function RootLayout({
       <html lang="en">
         <body className='bg-white'>
           <Navbar user={user}/>
+          {/* <DefaultSeo {...SEO} /> */}
           {children}
           <Footer/>
         </body>

@@ -1,9 +1,6 @@
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
 import { Database } from '../../../database.types'
 import { createClient } from "@/../utils/server";
-// import { Auth } from "@supabase/auth-ui-react";
-// import { ThemeSupa } from "@supabase/auth-ui-shared";
-// import { getURL } from "../../../utils/helpers";
 import { headers, cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { LoginForm } from '../components/Forms/LoginForm';
@@ -83,11 +80,11 @@ export default async function Login() {
       />
     </div>
     <div className="bg-white justify-center flex items-center border-2 rounded-md w-[40vw] xl:w-[50vw]">
-      <span className="text-6xl text-black uppercase border-2 rounded-full p-10 hover:bg-black hover:text-white transition-all">
+      <span className="p-10 text-6xl text-black uppercase transition-all border-2 rounded-full hover:bg-black hover:text-white">
         put epic shit here
       </span>
     </div> */}
-    <div className="flex-1 flex flex-col w-full px-8 sm:max-w-md justify-center gap-2">
+    <div className="flex flex-col justify-center flex-1 w-full gap-2 px-8 sm:max-w-md">
     <LoginForm signIn={signIn} signUp={signUp} user={user}/>
     </div>
   </div>

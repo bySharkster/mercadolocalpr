@@ -7,6 +7,7 @@ MercadolocalPR es una plataforma de compra y venta en línea enfocada en Puerto 
 
 - [@Greg-CS](https://www.github.com/Greg-CS)
 - [@bySharkster](https://github.com/bySharkster)
+- [@enrique-rodriguez](https://github.com/enrique-rodriguez)
 
 
 ## Roadmap

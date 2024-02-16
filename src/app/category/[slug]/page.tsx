@@ -19,11 +19,10 @@ export default async function Page({ params }: { params: { slug: string } }) {
   }
   
   return (
-    <div className="min-h-screen text-black bg-white">
-      <h1 className="p-10 text-4xl font-bold text-center">{slug}</h1>
-      <div className="divider"></div>
-      <div className="grid justify-center gap-10 p-10 md:justify-between md:flex bg-slate-100">
-        <div className="grid gap-4 p-10 border-2 rounded-md">
+    <div className="min-h-screen text-black bg-[#A1B5D8]">
+      <h1 className="p-10 text-6xl font-bold text-start">{slug}</h1>
+      <div className="grid justify-center gap-10 p-10 md:justify-between md:flex">
+        <div className="grid gap-4 p-10 border-2 rounded-md filter-sidepanel">
           <input
             type="text"
             placeholder="Keywords"

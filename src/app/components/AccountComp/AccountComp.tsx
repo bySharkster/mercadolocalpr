@@ -2,6 +2,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { User, createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { ToastContainer, toast } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
 import type { Database } from '../../../../database.types'
 import Link from 'next/link';
 import { motion } from 'framer-motion';
@@ -294,7 +295,7 @@ export const AccountComp = ({ user }: { user: User | null }) => {
             <h1 className="text-4xl font-bold text-black">Articulos publicados:</h1>
             <span>Maneja sus publicaciones</span>
           </div>
-          <div className='flex justify-between items-center'>
+          <div className='flex items-center justify-between'>
             Filtrar por categoria:
             <select
               className="p-3 bg-white border-2 rounded-md"
@@ -308,7 +309,7 @@ export const AccountComp = ({ user }: { user: User | null }) => {
               <option value="other">Other</option>
             </select>
           </div>
-          <div className='flex justify-evenly p-10 bg-white mt-4 rounded-lg m-auto gap-12'>
+          <div className='flex gap-12 p-10 m-auto mt-4 bg-white rounded-lg justify-evenly'>
             {posts?.length === 0 && <div>No posts yet</div>}
             {posts?.map((post) => (
               <Link 
@@ -354,7 +355,7 @@ export const AccountComp = ({ user }: { user: User | null }) => {
             <input 
               id="email" 
               type="text" 
-              className='border-2 rounded-md p-2 text-white' 
+              className='p-2 text-white border-2 rounded-md' 
               value={user?.email} 
               disabled 
             />
@@ -397,7 +398,7 @@ export const AccountComp = ({ user }: { user: User | null }) => {
                 />
                 {previewUrl && <img className='h-[30vh] w-[20vw]' src={previewUrl} alt="Preview" />}
               </div>
-              <div className="grid gap-4 p-4 border-2 border-gray-300 rounded-md mt-5">
+              <div className="grid gap-4 p-4 mt-5 border-2 border-gray-300 rounded-md">
                 <div className="flex gap-4">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"

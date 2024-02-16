@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { ContactForm } from "../components/Forms/ContactForm";
+import { Gearbox } from "../components/AnimatedComponents/Gearbox";
 
 export default function About() {
 
@@ -24,18 +25,23 @@ export default function About() {
           </div>
         </div>
 
-        <div className="p-10 text-right">
-          <h1 className="py-10 text-2xl" id="contacto">Contactece:</h1>
-          <ContactForm />
+        <div className="flex items-center justify-between p-10 text-right">
+          <div>
+            <Gearbox />
+          </div>
+          <div className="p-10 border-2 rounded-xl">
+            <h1 className="text-4xl font-bold" id="contacto">Comuniquece:</h1>
+            <ContactForm />
+          </div>
         </div>
         
         <div className="flex justify-center">
-          {/* <Image
+          <Image
             src="/img/hero.jpg"
             alt="Picture of the author"
             width={500}
             height={500}
-          /> */}
+          />
         </div>
       </div>
     );
