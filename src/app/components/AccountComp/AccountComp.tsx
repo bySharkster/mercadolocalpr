@@ -134,33 +134,13 @@ export const AccountComp = ({ user }: { user: User | null }) => {
     }
   })
 
-  const handleUsernameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const newUsername = event.target.value;
-    if (newUsername.length > 12) {
-      toast.error('Username cannot be longer than 12 characters!');
-    } else {
-      setUsername(newUsername);
-    }
-  };
-
-  const handleDescriptionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const newDescription = event.target.value;
-    if (newDescription.length > 100) {
-      toast.error('Description cannot be longer than 100 characters!');
-    } else {
-      setDescription(newDescription);
-    }
-  }
-
   async function updateProfile({
     username,
-    fullname,
     description,
     profile_image_url,
     banner_image_url,
   }: {
     username: string | null
-    fullname: string | null
     description: string | null
     profile_image_url: string | null
     banner_image_url: string | null
@@ -170,7 +150,6 @@ export const AccountComp = ({ user }: { user: User | null }) => {
 
       const { error } = await supabase.from('profiles').upsert({
         id: user?.id as string,
-        full_name: fullname,
         username,
         description,
         profile_image_url,
@@ -384,13 +363,13 @@ export const AccountComp = ({ user }: { user: User | null }) => {
               type="text"
               className="bg-white border-2 border-black input input-bordered"
               value={username ?? ''}
-              onChange={handleUsernameChange}
+              onChange={ev => setUsername(ev.target.value)}
             />
             <label htmlFor="Description">Descripcion</label>
             <textarea
               className="bg-white border-2 border-black input input-bordered min-h-[100px]"
               value={description ?? ''}
-              onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => handleDescriptionChange(event)}
+              onChange={ev => setDescription(ev.target.value)}
             />
             <div className="pt-5">
               <div className="grid gap-4 p-4 border-2 border-gray-300 rounded-md">
@@ -447,7 +426,7 @@ export const AccountComp = ({ user }: { user: User | null }) => {
             <div className='flex justify-between pt-10'>
               <button
                 className="btn w-[100%]"
-                onClick={() => updateProfile({ fullname, username, profile_image_url: profileImageUrl, banner_image_url: bannerImageUrl, description})}
+                onClick={() => updateProfile({ username, profile_image_url: profileImageUrl, banner_image_url: bannerImageUrl, description})}
                 disabled={loading}
               >
                 {loading ? 'Loading ...' : 'Update'}
