@@ -1,17 +1,16 @@
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
-import { Database } from '../../../database.types'
+import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
+import { Database } from "../../../database.types";
 import { createClient } from "@/../utils/server";
 import { headers, cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { LoginForm } from '../components/Forms/LoginForm';
+import { LoginForm } from "../components/Forms/LoginForm";
 
 export default async function Login() {
-  const supabase = createServerComponentClient<Database>({ cookies })
+  const supabase = createServerComponentClient<Database>({ cookies });
 
   const {
     data: { user },
-  } = await supabase.auth.getUser()
-
+  } = await supabase.auth.getUser();
 
   const signIn = async (formData: FormData) => {
     "use server";
@@ -58,8 +57,8 @@ export default async function Login() {
   };
 
   return (
-  <div className="grid gap-10 xl:gap-0 xl:flex justify-center xl:justify-between p-10 m-10 bg-[#E4F0D0] rounded-md">
-    {/* <div className="border-2 p-10 rounded-md bg-white w-[40vw]">
+    <div className="grid gap-10 xl:gap-0 xl:flex justify-center p-10 m-10 bg-[#E4F0D0] rounded-md">
+      {/* <div className="border-2 p-10 rounded-md bg-white w-[40vw]">
       <Auth
         supabaseClient={supabaseClient}
         providers={["github", "google", "facebook"]}
@@ -84,9 +83,9 @@ export default async function Login() {
         put epic shit here
       </span>
     </div> */}
-    <div className="flex flex-col justify-center flex-1 w-full gap-2 px-8 sm:max-w-md">
-    <LoginForm signIn={signIn} signUp={signUp} user={user}/>
+      <div className="flex flex-col justify-center flex-1 w-full gap-2 px-8 sm:max-w-md">
+        <LoginForm signIn={signIn} signUp={signUp} user={user} />
+      </div>
     </div>
-  </div>
   );
 }
