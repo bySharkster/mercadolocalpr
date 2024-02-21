@@ -1,17 +1,68 @@
 "use client";
 
-import React, { useEffect } from "react";
+import { Database } from "../../../../database.types";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
+import { User } from "@supabase/auth-helpers-nextjs";
+import { ResetPassModal } from "../Modals/ResetPassModal";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { redirect } from "next/navigation";
 
 interface Props {
   signIn: (formData: FormData) => void;
   signUp: (formData: FormData) => void;
-  user: any;
+  user: User | null;
 }
 
 export const LoginForm = ({ signIn, signUp, user }: Props) => {
   const router = useRouter();
+  const supabase = createClientComponentClient<Database>();
+  const [password, setPassword] = useState("")
+  const [isModalActive, setIsModalActive] = useState(false)
+
+  /**
+   * Step 1: Send the user an email to get a password reset token.
+   * This email contains a link which sends the user back to your application.
+  */
+
+  const forgotPassword = async (formData: FormData) => {
+
+    console.log("forgot password");
+    const email = formData.get("email") as string;
+    const { error } = await supabase.auth
+    .resetPasswordForEmail(email);
+
+    
+    
+    if (error) {
+      return redirect("/login?message=Could not authenticate user");
+    }
+    
+    return toast.success("Check email to continue password reset process");
+  }
+
+  /**
+   * Step 2: Once the user is redirected back to your application,
+   * ask the user to reset their password.
+   */
+
+  useEffect(() => {
+   supabase.auth.onAuthStateChange(async (event, session) => {
+     if (event == "PASSWORD_RECOVERY") {
+        setIsModalActive(true)
+        if (password) {
+        const { data, error } = await supabase.auth
+         .updateUser({ password: password })
+
+       if (data) alert("Password updated successfully!")
+       if (error) alert("There was an error updating your password.")
+        }
+    }
+   })
+  }, [])
+ 
   useEffect(() => {
     if (user) {
       router.push("/account");
@@ -42,16 +93,16 @@ export const LoginForm = ({ signIn, signUp, user }: Props) => {
               <path
                 d="M20 4H4C2.89543 4 2 4.89543 2 6V18C2 19.1046 2.89543 20 4 20H20C21.1046 20 22 19.1046 22 18V6C22 4.89543 21.1046 4 20 4Z"
                 stroke="black"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
               />
               <path
                 d="M22 7L13.03 12.7C12.7213 12.8934 12.3643 12.996 12 12.996C11.6357 12.996 11.2787 12.8934 10.97 12.7L2 7"
                 stroke="black"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
               />
             </svg>
           </span>
@@ -80,16 +131,16 @@ export const LoginForm = ({ signIn, signUp, user }: Props) => {
               <path
                 d="M19 11H5C3.89543 11 3 11.8954 3 13V20C3 21.1046 3.89543 22 5 22H19C20.1046 22 21 21.1046 21 20V13C21 11.8954 20.1046 11 19 11Z"
                 stroke="black"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
               />
               <path
                 d="M7 11V7C7 5.67392 7.52678 4.40215 8.46447 3.46447C9.40215 2.52678 10.6739 2 12 2C13.3261 2 14.5979 2.52678 15.5355 3.46447C16.4732 4.40215 17 5.67392 17 7V11"
                 stroke="black"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
               />
             </svg>
           </span>
@@ -120,18 +171,18 @@ export const LoginForm = ({ signIn, signUp, user }: Props) => {
           </label>
         </div>
         <div className="text-xs">
-          <Link
-            href="/forgot-password"
+          <button
+            formAction={forgotPassword}
             className="font-medium text-green-600 hover:text-green-500"
           >
             Forgot your password?
-          </Link>
+          </button>
         </div>
       </div>
 
       {/* Sign in & sign up button */}
       <div className="flex flex-col gap-2">
-        <button className="bg-green-700 hover:bg-green-900 text-white rounded-md px-4 py-2  text-foreground ">
+        <button className="bg-green-700 hover:bg-green-900 text-white rounded-md px-4 py-2  text-foreground">
           Login
         </button>
         <button
@@ -141,6 +192,10 @@ export const LoginForm = ({ signIn, signUp, user }: Props) => {
           Register
         </button>
       </div>
+      {isModalActive &&
+        <ResetPassModal setPassword={setPassword}/>
+      }
+      <ToastContainer />
     </form>
   );
 };

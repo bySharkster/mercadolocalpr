@@ -113,16 +113,10 @@ import { MobileMenu } from "./MobileMenu";
         <div className="p-3 bg-white ">
           <NavLinks />
         </div>
-        <div className="bg-[#3A4F41] p-3 flex justify-around">
-          <div className="flex gap-2">
-            <span className="text-white">MercadoLocalPR</span>
-            <span className="text-white">© 2021</span>
-          </div>
-          <div>
-            <div href="#" className="text-white">
-              Conviertace en vendedor
-            </div>
-          </div>
+        <div className="bg-[#3A4F41] p-3 flex justify-center">
+          <Link href="/subscriptions" className="text-white py-1 font-bold">
+            Conosca mas sobre el programa de vendedores 
+          </Link>
         </div>
       </nav>
     );
