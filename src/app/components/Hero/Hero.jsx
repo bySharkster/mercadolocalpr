@@ -1,3 +1,5 @@
+import { GoogleAdsComp } from "../Ads/GoogleAdsComp";
+
 export const Hero = () => {
 
     return (

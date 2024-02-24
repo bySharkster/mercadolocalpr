@@ -6,8 +6,8 @@ import { cookies } from 'next/headers'
 import { Database } from '../../database.types'
 import { DefaultSeo } from "next-seo";
 import SEO from "../../next-seo.config";
-
 import { Metadata } from 'next'
+import  GoogleAdsense  from '../../src/app/components/Ads/GoogleAdsComp'
  
 export const metadata: Metadata = {
   title: 'MercadoLocal PR',
@@ -34,6 +34,7 @@ export default async function RootLayout({
           {children}
           <Footer/>
         </body>
+        <GoogleAdsense pId="3379371602" />
       </html>
   )
 }
