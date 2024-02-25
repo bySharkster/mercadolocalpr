@@ -1,28 +1,57 @@
-## Getting Started
+# MercadolocalPR
 
-First, run the development server:
+MercadolocalPR es una plataforma de compra y venta en línea enfocada en Puerto Rico. Puede ser mejor que OfferUp o Clasificados Online PR debido a su enfoque en solo productos y servicios locales, lo que aumenta las posibilidades de encontrar artículos únicos y específicos de la región. También puede tener una interfaz más intuitiva y fácil de usar, así como una mayor seguridad en las transacciones debido a su enfoque en la comunidad local. Además, puede tener un sistema de calificaciones de vendedores y compradores para ayudar a los usuarios a tomar decisiones informadas sobre quienes comprar y vender. En resumen MercadolocalPR es una plataforma que se enfoca en la comunidad local, seguridad y facilidad de uso, lo que la hace una opción atractiva para aquellos que buscan comprar o vender productos o servicios en Puerto Rico.
+
+## Authors
+
+- [@Greg-CS](https://www.github.com/Greg-CS)
+- [@bySharkster](https://github.com/bySharkster)
+- [@enrique-rodriguez](https://github.com/enrique-rodriguez)
+
+## Roadmap
+
+- In app messaging
+
+- Ad adds
+
+- Admin system
+
+- Google maps feature
+
+- User notifications
+
+## Tech Stack
+
+**Client:** NextJS, TailwindCSS
+
+**Server:** Vercel
+
+## Support
+
+For support, email gregor.gr20@gmail.com or join our Slack channel.
+
+## Run Locally
+
+Clone the project
 
 ```bash
-yarn dev
+  git clone https://github.com/Greg-CS/mercadolocalpr.git
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Go to the project directory
 
-You can start editing the page by modifying `src/app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+  cd mercadolocalpr
+```
 
-To create [API routes](https://nextjs.org/docs/app/building-your-application/routing/router-handlers) add an `api/` directory to the `app/` directory with a `route.ts` file. For individual endpoints, create a subfolder in the `api` directory, like `api/hello/route.ts` would map to [http://localhost:3000/api/hello](http://localhost:3000/api/hello).
+Install dependencies
 
-## Learn More
+```bash
+  npm install
+```
 
-To learn more about Next.js, take a look at the following resources:
+Start the server
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn/foundations/about-nextjs) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_source=github.com&utm_medium=referral&utm_campaign=turborepo-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+```bash
+  npm run start
+```
