@@ -1,9 +1,7 @@
 import "./globals.css";
 import "@repo/ui/styles.css";
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-
-const inter = Inter({ subsets: ["latin"] });
+import { SidePanel } from "./components/SidePanel/SidePanel";
 
 export const metadata: Metadata = {
   title: "MercadoLocalPR - Admin",
@@ -17,7 +15,11 @@ export default function RootLayout({
 }): JSX.Element {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className="flex min-h-screen">
+        <SidePanel/>
+        {children}
+        
+      </body>
     </html>
   );
 }

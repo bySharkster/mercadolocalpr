@@ -8,6 +8,10 @@ Run the following command:
 
 ```sh
 npx create-turbo@latest -e with-tailwind
+
+# or
+
+npm run dev --filter=admin # or web or docs
 ```
 
 ## What's inside?
