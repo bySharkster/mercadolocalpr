@@ -1,7 +1,7 @@
 import "./globals.css";
 import "@repo/ui/styles.css";
 import type { Metadata } from "next";
-import { SidePanel } from "./components/SidePanel/SidePanel";
+import { SidePanel } from "./components/SidePanel/side-panel";
 
 export const metadata: Metadata = {
   title: "MercadoLocalPR - Admin",
