@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://mercadolocalpr.vercel.app/
+
+# Sitemaps
+Sitemap: https://mercadolocalpr.vercel.app/sitemap.xml

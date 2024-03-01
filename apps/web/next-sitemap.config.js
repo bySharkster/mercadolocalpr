@@ -3,7 +3,7 @@ module.exports = {
   changefreq: "daily",
   generateRobotsTxt: true, // (optional)
   priority: 0.9,
-  transform: async (config: any, path: any) => {
+  transform: async (config, path) => {
     return {
       loc: path, // => this will be exported as http(s)://<config.siteUrl>/<path>
       changefreq: config.changefreq,
