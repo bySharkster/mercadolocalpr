@@ -40,7 +40,7 @@ export default async function RootLayout({
     });
 
     if (error) {
-      return redirect("/login?message=Could not authenticate user");
+      alert(error.message);
     }
   };
 
