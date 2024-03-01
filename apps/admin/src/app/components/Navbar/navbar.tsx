@@ -1,7 +1,7 @@
 import React from 'react'
 import { LogoutButton } from '../buttons/log-out-btn'
 
-export function Navbar(): JSX.Element{
+export const Navbar = () => {
   return (
     <nav className='bg-[#344E41] w-[100vw] p-8 font-bold text-[#344E41] flex justify-between'>
       <div className='flex gap-12'>

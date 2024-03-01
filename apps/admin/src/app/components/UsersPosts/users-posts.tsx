@@ -41,9 +41,8 @@ export function UserPosts ({ catID }: { catID: number }) {
 
   return (
     <>
-      {category?
-        // ?.filter((post) => post.category === catID)
-        .map((post: PostTable) => (
+        {/* ?.filter((post) => post.category === catID) */}
+      {category?.map((post: PostTable) => (
           <Link href={`/UserPost/${post.id}`} key={post.id}>
             <div
               className="w-[38w] md:w-[25vw] lg:w-[15vw] h-[50vh] p-2 bg-[#DAD7CD] card mb-4"
