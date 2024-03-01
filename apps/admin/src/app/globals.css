@@ -18,12 +18,7 @@
 
 body {
   color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  background: #344E41
 }
 
 .card {
@@ -43,9 +38,9 @@ body {
   place-content: start;
 }
 
-.card-button {
+.card-button-approve {
   transform: translate(-50%, 125%);
-  width: 60%;
+  width: 40%;
   border-radius: 1rem;
   border: none;
   background-color: #3A4F41;
@@ -53,7 +48,23 @@ body {
   font-size: 1rem;
   padding: .5rem 1rem;
   position: absolute;
-  left: 50%;
+  left: 25%;
+  bottom: 0;
+  opacity: 0;
+  transition: 0.3s ease-out;
+}
+
+.card-button-delete {
+  transform: translate(-50%, 125%);
+  width: 40%;
+  border-radius: 1rem;
+  border: 2px solid #588157;
+  background-color: red;
+  color: #fff;
+  font-size: 1rem;
+  padding: .5rem 1rem;
+  position: absolute;
+  left: 75%;
   bottom: 0;
   opacity: 0;
   transition: 0.3s ease-out;
@@ -75,7 +86,12 @@ body {
   box-shadow: 0 4px 18px 0 rgba(0, 0, 0, 0.25);
 }
 
-.card:hover .card-button {
+.card:hover .card-button-approve {
+  transform: translate(-50%, 50%);
+  opacity: 1;
+}
+
+.card:hover .card-button-delete {
   transform: translate(-50%, 50%);
   opacity: 1;
 }

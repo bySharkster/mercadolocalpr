@@ -44,9 +44,9 @@ export function UserPosts ({ catID }: { catID: number }) {
       {category?
         // ?.filter((post) => post.category === catID)
         .map((post: PostTable) => (
-          <Link href={`/post/${post.id}`} key={post.id}>
+          <Link href={`/UserPost/${post.id}`} key={post.id}>
             <div
-              className="w-[38w] md:w-[25vw] lg:w-[15vw] h-[50vh] p-2 bg-white card mb-4"
+              className="w-[38w] md:w-[25vw] lg:w-[15vw] h-[50vh] p-2 bg-[#DAD7CD] card mb-4"
               // initial={{ opacity: 0, scale: 0.5 }} // initial state
               // animate={{ opacity: 1, scale: 1 }} // animate to this state
               // transition={{ duration: 0.5 }} // transition duration
@@ -66,7 +66,10 @@ export function UserPosts ({ catID }: { catID: number }) {
                 <p>Descripcion: {post.description}</p>
                 <span>Categoria: {post.category}</span>
               </div>
-              <button className="card-button">More info</button>
+              <div className="flex">
+                <button className="card-button-approve">More info</button>
+                <button className="card-button-delete">Delete</button>
+              </div>
             </div>
           </Link>
         ))}
