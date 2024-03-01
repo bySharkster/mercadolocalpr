@@ -1,9 +1,10 @@
 import React from 'react'
-import { Line } from 'react-chartjs-2';
+// import { Line } from 'react-chartjs-2';
 
 export function LineChart (): JSX.Element{
   return (
-        <Line
+    <>
+        {/* <Line
             datasetIdKey='id'
             data={{
                 labels: ['Jun', 'Jul', 'Aug'],
@@ -20,6 +21,7 @@ export function LineChart (): JSX.Element{
                 },
                 ],
             }}
-        />
+        /> */}
+    </>
   )
 }
