@@ -1,5 +1,5 @@
 import React from 'react'
-import { LogoutButton } from '../buttons/log-out-btn'
+// import { LogoutButton } from '../buttons/log-out-btn'
 
 export const Navbar = () => {
   return (
@@ -46,7 +46,7 @@ export const Navbar = () => {
                   </div>
                 </li>
                 <li><div>Settings</div></li>
-                <li><LogoutButton/></li>
+                {/* <li><LogoutButton/></li> */}
               </ul>
             </div>
       </div>

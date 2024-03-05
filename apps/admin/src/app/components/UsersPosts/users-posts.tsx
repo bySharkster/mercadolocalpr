@@ -40,38 +40,58 @@ export function UserPosts ({ catID }: { catID: number }) {
   if (!posts) return <Spinner />;
 
   return (
-    <>
-        {/* ?.filter((post) => post.category === catID) */}
-      {category?.map((post: PostTable) => (
-          <Link href={`/UserPost/${post.id}`} key={post.id}>
-            <div
-              className="w-[38w] md:w-[25vw] lg:w-[15vw] h-[50vh] p-2 bg-[#DAD7CD] card mb-4"
-              // initial={{ opacity: 0, scale: 0.5 }} // initial state
-              // animate={{ opacity: 1, scale: 1 }} // animate to this state
-              // transition={{ duration: 0.5 }} // transition duration
-            >
-              <Image
-                className="object-cover w-full border-2 rounded-md border-[#A1B5D8] hover:border-[#3A4F41] transition-all"
-                src={post.photo_url || "/img/placeholder.jpg"}
-                alt={post.title || "No Title"}
-                width={500}
-                height={300}
-              />
-              <div className="grid p-2 card-details">
-                <h2>Titulo: {post.title || "No Title"}</h2>
-                <span>Precio: {post.price}</span>
-                <span>Localizacion: {post.location}</span>
-                <h4>fecha: {post.created_at}</h4>
-                <p>Descripcion: {post.description}</p>
-                <span>Categoria: {post.category}</span>
-              </div>
-              <div className="flex">
-                <button className="card-button-approve">More info</button>
-                <button className="card-button-delete">Delete</button>
-              </div>
-            </div>
-          </Link>
-        ))}
-    </>
+    <div className="overflow-x-auto p-10">
+      <table className="table table-xs border-2 rounded-xl">
+        <thead>
+          <tr>
+            <th></th> 
+            <th>Image</th> 
+            <th>Title</th> 
+            <th>Price</th> 
+            <th>Location</th> 
+            <th>created_at</th> 
+            <th>Description</th>
+            <th>Category</th>
+          </tr>
+        </thead> 
+        <tbody> 
+          {/* ?.filter((post) => post.category === catID) */}
+          {category?.map((post: PostTable) => (
+            <tr key={post.id}>
+              <th></th>
+              {/* <Link href={`/UserPost/${post.id}`} className="flex"> */}
+              <td>
+                <Image
+                  className="object-cover w-full border-2 rounded-md border-[#A1B5D8] hover:border-[#3A4F41] transition-all"
+                  src={post.photo_url || "/img/placeholder.jpg"}
+                  alt={post.title || "No Title"}
+                  width={500}
+                  height={300}
+                />
+              </td>
+              <td>{post.title || "No Title"}</td>
+              <td>{post.price}</td>
+              <td>{post.location}</td>
+              <td>{post.created_at}</td>
+              <td>{post.description}</td>
+              <td>{post.category}</td>
+              {/* </Link> */}
+            </tr>
+          ))}
+        </tbody> 
+        <tfoot>
+          <tr>
+            <th></th> 
+            <th>Image</th> 
+            <th>Title</th> 
+            <th>Price</th> 
+            <th>Location</th> 
+            <th>created_at</th> 
+            <th>Description</th>
+            <th>Category</th>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
   );
 };
