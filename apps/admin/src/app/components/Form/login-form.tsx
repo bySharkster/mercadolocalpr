@@ -139,7 +139,7 @@ export function LoginForm ({ signIn, user }: Props): JSX.Element {
             </svg>
           </span>
           <input
-            className="px-4 py-2 bg-inherit "
+            className="input input-bordered w-full max-w-xs"
             type="password"
             name="password"
             value={password}

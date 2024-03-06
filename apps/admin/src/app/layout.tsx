@@ -8,6 +8,8 @@ import { SidePanel } from "./components/SidePanel/side-panel";
 import { Navbar } from "./components/Navbar/navbar";
 import { createClient } from "../../utils/server";
 import { LoginForm } from "./components/Form/login-form";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export const metadata: Metadata = {
   title: "MercadoLocalPR - Admin",
@@ -40,7 +42,7 @@ export default async function RootLayout({
     });
 
     if (error) {
-      alert(error.message);
+      toast(error.message);
     }
   };
 
@@ -62,7 +64,7 @@ export default async function RootLayout({
             {children}
           </div>
         </div>
-        
+        <ToastContainer/>
       </body>
     </html>
   );
