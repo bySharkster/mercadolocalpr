@@ -1,9 +1,9 @@
 import * as values from "../Values";
 import * as events from "../Events";
 
-import { AggregateRoot } from "@/core/shared/domain/Entity";
-import DomainEvent from "@/core/shared/domain/DomainEvent";
 import ModerationAPI from "../ModerationAPI";
+import DomainEvent from "../../../shared/domain/DomainEvent";
+import { AggregateRoot } from "../../../shared/domain/Entity";
 
 /**
  * State class representing the current state of a Post aggregate.

@@ -1,4 +1,4 @@
-import DomainEventHandler from "@/core/shared/application/DomainEventHandler";
+import DomainEventHandler from "../../../shared/application/DomainEventHandler";
 import { PostModeratedEvent } from "../../domain/Events";
 import PostReadModelStore from "../../domain/PostReadModelStore";
 

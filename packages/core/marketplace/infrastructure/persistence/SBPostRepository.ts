@@ -1,8 +1,8 @@
 import PostRepository from "../../domain/PostRepository";
 import Post from "../../domain/Entities/Post";
-import DomainEvent from "@/core/shared/domain/DomainEvent";
-import { SupabaseClient } from "@/core/shared/infrastructure/persistence/supabase";
 import * as events from "../../domain/Events";
+import DomainEvent from "../../../shared/domain/DomainEvent";
+import { SupabaseClient } from "../../../shared/infrastructure/persistence/supabase";
 
 /**
  * Supabase-backed implementation of the PostRepository interface.

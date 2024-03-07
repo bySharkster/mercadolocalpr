@@ -1,8 +1,8 @@
-import CommandHandler from "@/core/shared/application/CommandHandler";
 import CreatePostCommand from "./CreatePostCommand";
-import Post from "@/core/marketplace/domain/Entities/Post";
 import ModerationAPI from "../../domain/ModerationAPI";
-import UnitOfWork from "@/core/shared/application/UnitOfWork";
+import CommandHandler from "../../../shared/application/CommandHandler";
+import UnitOfWork from "../../../shared/application/UnitOfWork";
+import Post from "../../domain/Entities/Post";
 
 /**
  * Command handler for processing the CreatePostCommand and creating a new post.

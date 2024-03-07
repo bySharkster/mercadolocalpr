@@ -1,6 +1,6 @@
-import initializeMarketplace from "@/core/marketplace";
-import MessageBus from "@/core/shared/infrastructure/MessageBus";
 
+import initializeMarketplace from "../marketplace"
+import MessageBus from "../shared/infrastructure/MessageBus";
 import config from "./config";
 
 /**

@@ -1,6 +1,6 @@
-import { SupabaseClient } from "@/core/shared/infrastructure/persistence/supabase";
 import PostReadModelStore from "../../domain/PostReadModelStore";
 import PostModel from "../../domain/Models/PostModel";
+import { SupabaseClient } from "../../../shared/infrastructure/persistence/supabase";
 
 /**
  * Supabase-backed implementation of the PostReadModelStore interface.

@@ -1,7 +1,7 @@
-import DomainEventHandler from "@/core/shared/application/DomainEventHandler";
 import { PostCreatedEvent } from "../../domain/Events";
 import PostReadModelStore from "../../domain/PostReadModelStore";
 import PostModel from "../../domain/Models/PostModel";
+import DomainEventHandler from "../../../shared/application/DomainEventHandler";
 
 /**
  * Domain event handler for processing the PostCreatedEvent and updating the post read model.

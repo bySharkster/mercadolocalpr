@@ -1,4 +1,4 @@
-import DomainEvent from "@/core/shared/domain/DomainEvent";
+import DomainEvent from "../../shared/domain/DomainEvent";
 
 /**
  * Domain event representing the creation of a new post.

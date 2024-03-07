@@ -1,4 +1,4 @@
-import Command from "@/core/shared/application/Command";
+import Command from "../../../shared/application/Command";
 
 /**
  * Command class representing the intention to create a new post in the application.
