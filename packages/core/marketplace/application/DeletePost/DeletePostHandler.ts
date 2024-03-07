@@ -35,6 +35,7 @@ export class DeletePostHandler extends CommandHandler {
         let post = new Post(events);
 
         // Mark the post as deleted using the user ID initiating the deletion
+        
         post.delete(new SellerId(cmd.sellerId));
 
         // Save the modified post entity using the unit of work

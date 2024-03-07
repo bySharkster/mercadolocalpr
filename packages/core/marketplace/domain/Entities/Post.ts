@@ -4,6 +4,7 @@ import * as events from "../Events";
 import ModerationAPI from "../ModerationAPI";
 import DomainEvent from "../../../shared/domain/DomainEvent";
 import { AggregateRoot } from "../../../shared/domain/Entity";
+import { LocationId } from "./Location/Values/LocationId";
 
 /**
  * State class representing the current state of a Post aggregate.
@@ -26,19 +27,27 @@ class PostState {
     public isModerated: boolean;
 
     /**
+     * The location id of the post
+     *
+     * @public
+     * @type {?LocationId}
+     */
+    public locationId?: LocationId;
+
+    /**
      * Creates an instance of the PostState class.
      * @param {values.PostId} id - The unique identifier of the post.
      * @param {values.PostInfo} postInfo - Information about the post (title, photoUrl, location, description).
      * @param {values.PostPrice} price - The price of the post.
      * @param {values.SellerId} sellerId - The unique identifier of the user who created the post.
-     * @param {values.PostCategoryId} category - The category of the post.
+     * @param {values.PostCategoryId} categoryId - The category of the post.
      */
     public constructor(
         public id?: values.PostId,
         public postInfo?: values.PostInfo,
         public price?: values.PostPrice,
         public sellerId?: values.SellerId,
-        public category?: values.PostCategoryId,
+        public categoryId?: values.PostCategoryId,
     ) {
         this.isDeleted = false;
         this.isModerated = false;
@@ -65,10 +74,11 @@ class PostState {
      */
     private applyPostCreatedEvent(event: events.PostCreatedEvent) {
         this.id = new values.PostId(event.id);
-        this.postInfo = new values.PostInfo(event.title, event.photoUrl, event.location, event.description);
+        this.postInfo = new values.PostInfo(event.title, event.photoUrl, event.locationId, event.description);
         this.price = new values.PostPrice(event.price);
         this.sellerId = new values.SellerId(event.sellerId);
-        this.category = new values.PostCategoryId(event.category);
+        this.categoryId = new values.PostCategoryId(event.categoryId);
+        this.locationId = new LocationId(event.locationId);
         this.isModerated = false;
         this.isDeleted = false;
     }

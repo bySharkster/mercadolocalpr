@@ -20,7 +20,6 @@ export abstract class Entity {
      */
     public addEvent(event: DomainEvent): void {
         this.domainEvents.push(event);
-        this.apply(event);
     }
 
     /**
@@ -37,12 +36,7 @@ export abstract class Entity {
     public clearEvents(): void {
         this.domainEvents = [];
     }
-
-    /**
-     * Abstract method to be implemented by subclasses to apply domain events.
-     * @param {DomainEvent} event - The domain event to be applied.
-     */
-    protected abstract apply(event: DomainEvent): void;
+    
 }
 
 /**
@@ -50,5 +44,19 @@ export abstract class Entity {
  * Aggregate roots are special entities that define the boundaries of a consistency boundary.
  */
 export abstract class AggregateRoot extends Entity {
-    // Additional functionality specific to aggregate roots can be added here.
+
+    /**
+     * Adds a domain event to the entity, applies the event, and stores it in the list of domain events.
+     * @param {DomainEvent} event - The domain event to be added.
+     */
+    public addEvent(event: DomainEvent): void {
+        super.addEvent(event);
+        this.apply(event);
+    }
+
+    /**
+     * Abstract method to be implemented by subclasses to apply domain events.
+     * @param {DomainEvent} event - The domain event to be applied.
+     */
+    protected abstract apply(event: DomainEvent): void;
 }
