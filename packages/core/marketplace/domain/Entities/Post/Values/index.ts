@@ -1,4 +1,4 @@
-import * as values from "../../shared/domain/Values";
+import * as values from "../../../../../shared/domain/Values";
 
 /**
  * Represents the unique identifier for a Post.

@@ -1,7 +1,7 @@
 import DeletePostCommand from "./DeletePostCommand";
-import Post from "../../domain/Entities/Post";
+import Post from "../../domain/Entities/Post/Post";
 import PostNotFoundError from "../../domain/Exceptions/PostNotFoundError";
-import { SellerId } from "../../domain/Values";
+import { SellerId } from "../../domain/Entities/Post/Values";
 import CommandHandler from "../../../shared/application/CommandHandler";
 import UnitOfWork from "../../../shared/application/UnitOfWork";
 

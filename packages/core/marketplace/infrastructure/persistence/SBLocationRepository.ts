@@ -1,4 +1,4 @@
-import LocationRepository from "../../domain/LocationRepository";
+import LocationRepository from "../../domain/Repositories/LocationRepository";
 import Location from "../../domain/Entities/Location/Location";
 import { SupabaseClient } from "../../../shared/infrastructure/persistence/supabase";
 

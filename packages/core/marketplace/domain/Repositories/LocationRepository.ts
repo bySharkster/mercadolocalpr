@@ -1,4 +1,4 @@
-import Location from "./Entities/Location/Location";
+import Location from "../Entities/Location/Location";
 
 /**
  * Interface representing a repository for managing Location entities.

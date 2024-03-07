@@ -1,10 +1,10 @@
-import * as values from "../Values";
-import * as events from "../Events";
+import * as values from "./Values";
+import * as events from "../../Events";
 
-import ModerationAPI from "../ModerationAPI";
-import DomainEvent from "../../../shared/domain/DomainEvent";
-import { AggregateRoot } from "../../../shared/domain/Entity";
-import { LocationId } from "./Location/Values/LocationId";
+import ModerationAPI from "../../ModerationAPI";
+import DomainEvent from "../../../../shared/domain/DomainEvent";
+import { AggregateRoot } from "../../../../shared/domain/Entity";
+import { LocationId } from "../Location/Values";
 
 /**
  * State class representing the current state of a Post aggregate.

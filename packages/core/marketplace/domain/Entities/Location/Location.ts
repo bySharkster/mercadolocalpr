@@ -1,5 +1,5 @@
 import { Entity } from "../../../../shared/domain/Entity";
-import { LocationId, LocationName } from "./Values/LocationId";
+import { LocationId, LocationName } from "./Values";
 
 /**
  * Represents a location within the application.

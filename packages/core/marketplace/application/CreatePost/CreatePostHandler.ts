@@ -2,8 +2,8 @@ import CreatePostCommand from "./CreatePostCommand";
 import ModerationAPI from "../../domain/ModerationAPI";
 import CommandHandler from "../../../shared/application/CommandHandler";
 import UnitOfWork from "../../../shared/application/UnitOfWork";
-import Post from "../../domain/Entities/Post";
-import LocationRepository from "../../domain/LocationRepository";
+import Post from "../../domain/Entities/Post/Post";
+import LocationRepository from "../../domain/Repositories/LocationRepository";
 
 /**
  * Command handler for processing the CreatePostCommand and creating a new post.

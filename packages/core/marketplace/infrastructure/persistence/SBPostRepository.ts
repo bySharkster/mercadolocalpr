@@ -1,5 +1,5 @@
-import PostRepository from "../../domain/PostRepository";
-import Post from "../../domain/Entities/Post";
+import PostRepository from "../../domain/Repositories/PostRepository";
+import Post from "../../domain/Entities/Post/Post";
 import * as events from "../../domain/Events";
 import DomainEvent from "../../../shared/domain/DomainEvent";
 import { SupabaseClient } from "../../../shared/infrastructure/persistence/supabase";
