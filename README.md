@@ -15,7 +15,7 @@ turbo dev --filter admin
 Run the following command:
 
 ```sh
-.
+
 npm i -S package_name@version-#
 
 ```
