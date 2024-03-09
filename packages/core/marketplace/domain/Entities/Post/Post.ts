@@ -7,19 +7,19 @@ import { AggregateRoot } from "../../../../shared/domain/Entity";
 import { LocationId } from "../Location/Values";
 
 /**
- * State class representing the current state of a Post aggregate.
- * It contains properties related to the Post entity and methods to apply domain events.
+ * Represents the state of a Post aggregate within the domain, encapsulating all properties and state transitions through domain events.
  */
 class PostState {
     /**
-     * [placeholder]
+     * Indicates whether the post has been deleted.
      *
      * @public
      * @type {boolean}
      */
     public isDeleted: boolean;
+    
     /**
-     * [placeholder]
+     * Indicates whether the post has undergone moderation.
      *
      * @public
      * @type {boolean}
@@ -27,7 +27,7 @@ class PostState {
     public isModerated: boolean;
 
     /**
-     * The location id of the post
+     * The location ID associated with the post, if any.
      *
      * @public
      * @type {?LocationId}
@@ -35,12 +35,13 @@ class PostState {
     public locationId?: LocationId;
 
     /**
-     * Creates an instance of the PostState class.
+     * Initializes a new instance of the PostState class with optional initial property values.
+     * 
      * @param {values.PostId} id - The unique identifier of the post.
-     * @param {values.PostInfo} postInfo - Information about the post (title, photoUrl, location, description).
+     * @param {values.PostInfo} postInfo - Composite information about the post, including title, photo URL, location ID, and description.
      * @param {values.PostPrice} price - The price of the post.
-     * @param {values.SellerId} sellerId - The unique identifier of the user who created the post.
-     * @param {values.PostCategoryId} categoryId - The category of the post.
+     * @param {values.SellerId} sellerId - The identifier of the seller who created the post.
+     * @param {values.PostCategoryId} categoryId - The identifier of the post's category.
      */
     public constructor(
         public id?: values.PostId,
@@ -54,7 +55,8 @@ class PostState {
     }
 
     /**
-     * Applies a domain event to update the state of the Post.
+     * Applies a given domain event to mutate the state of the Post accordingly.
+     * 
      * @param {DomainEvent} event - The domain event to be applied.
      */
     public apply(event: DomainEvent) {
@@ -65,12 +67,13 @@ class PostState {
         else if (event instanceof events.PostModeratedEvent)
             this.applyPostModeratedEvent(event);
         else
-            throw new Error(`Unhandled event '${event.constructor.name}'`)
+            throw new Error(`Unhandled event '${event.constructor.name}'`);
     }
 
     /**
-     * Applies the PostCreatedEvent to update the state with the event data.
-     * @param {events.PostCreatedEvent} event - The PostCreatedEvent to be applied.
+     * Updates the state based on the PostCreatedEvent, initializing it with event data.
+     * 
+     * @param {events.PostCreatedEvent} event - The event to apply.
      */
     private applyPostCreatedEvent(event: events.PostCreatedEvent) {
         this.id = new values.PostId(event.id);
@@ -84,18 +87,18 @@ class PostState {
     }
 
     /**
-     * Applies the PostDeletedEvent to mark the post as deleted.
-     * @param {events.PostDeletedEvent} event - The PostDeletedEvent to be applied.
+     * Marks the post as deleted in response to a PostDeletedEvent.
+     * 
+     * @param {events.PostDeletedEvent} event - The event to apply.
      */
     private applyPostDeletedEvent(event: events.PostDeletedEvent): void {
         this.isDeleted = true;
     }
 
     /**
-     * [placeholder]
-     *
-     * @private
-     * @param {events.PostModeratedEvent} event
+     * Applies moderation changes to the post in response to a PostModeratedEvent.
+     * 
+     * @param {events.PostModeratedEvent} event - The moderation event to apply.
      */
     private applyPostModeratedEvent(event: events.PostModeratedEvent): void {
         this.postInfo = new values.PostInfo(
@@ -104,23 +107,24 @@ class PostState {
             this.postInfo!.location,
             event.moderatedDescription
         );
+        this.isModerated = true;
     }
 
     /**
-     * [placeholder]
-     *
+     * Retrieves the title of the post.
+     * 
      * @public
-     * @returns {string}
+     * @returns {string} - The post's title.
      */
     public getPostTitle(): string {
         return this.postInfo!.title;
     }
 
     /**
-     * [placeholder]
-     *
+     * Retrieves the description of the post.
+     * 
      * @public
-     * @returns {string}
+     * @returns {string} - The post's description.
      */
     public getPostDescription(): string {
         return this.postInfo!.description;
@@ -128,21 +132,21 @@ class PostState {
 }
 
 /**
- * Aggregate root representing a Post entity.
- * It extends the base AggregateRoot class and manages the state of the Post.
+ * The Post aggregate root, encapsulating the state and behaviors of a Post entity.
  */
 export default class Post extends AggregateRoot {
     /**
-     * The current state of the Post.
-     *
+     * The encapsulated state of the Post.
+     * 
      * @private
      * @type {PostState}
      */
     private state: PostState;
 
     /**
-     * Creates an instance of the Post aggregate.
-     * @param {DomainEvent[]} events - Array of domain events to apply during construction.
+     * Initializes a new instance of the Post aggregate, optionally applying an array of domain events.
+     * 
+     * @param {DomainEvent[]} events - An optional array of domain events to apply to the state.
      */
     public constructor(events?: DomainEvent[]) {
         super();
@@ -153,14 +157,16 @@ export default class Post extends AggregateRoot {
 
     /**
      * Gets the unique identifier of the post.
-     * @returns {string | undefined} - The ID of the post.
+     * 
+     * @returns {string | undefined} - The ID of the post, if available.
      */
     public getId(): string | undefined {
         return this.state.id?.id;
     }
 
     /**
-     * Gets a value indicating whether the post is deleted.
+     * Indicates whether the post has been marked as deleted.
+     * 
      * @returns {boolean} - True if the post is deleted, otherwise false.
      */
     public get isDeleted(): boolean {
@@ -168,36 +174,35 @@ export default class Post extends AggregateRoot {
     }
 
     /**
-     * Checks if the post is owned by the specified user.
-     * @param {values.SellerId} sellerId - The ID of the user to check against.
-     * @returns {boolean} - True if the post is owned by the specified user, otherwise false.
+     * Determines if the post is owned by a specified user.
+     * 
+     * @param {values.SellerId} sellerId - The identifier of the seller to compare against.
+     * @returns {boolean} - True if the post is owned by the given seller, otherwise false.
      */
     public isOwnedBy(sellerId: values.SellerId): boolean {
-        if(this.state.sellerId) {
-            return this.state.sellerId?.equals(sellerId);
-        }
-
-        return false;
+        return this.state.sellerId?.equals(sellerId) || false;
     }
 
     /**
-     * Applies a domain event to update the state of the Post.
-     * @param {DomainEvent} event - The domain event to be applied.
+     * Applies a domain event to the Post, modifying its state accordingly.
+     * 
+     * @param {DomainEvent} event - The domain event to apply.
      */
     protected apply(event: DomainEvent): void {
         this.state.apply(event);
     }
 
     /**
-     * Creates a new Post instance using the provided data and emits a PostCreatedEvent.
-     * @param {string} id - The unique identifier for the post.
-     * @param {string} title - The title of the post.
-     * @param {string} description - The description of the post.
-     * @param {string} price - The price of the post.
-     * @param {string} location - The location of the post.
-     * @param {string} sellerId - The unique identifier of the user creating the post.
-     * @param {string} category - The category of the post.
-     * @param {string} photoUrl - The URL of the photo associated with the post.
+     * Factory method for creating a new Post instance with the provided parameters and emitting a PostCreatedEvent.
+     * 
+     * @param {string} id - The post's unique identifier.
+     * @param {string} title - The post's title.
+     * @param {string} description - The post's description.
+     * @param {string} price - The post's price.
+     * @param {string} location - The post's location.
+     * @param {string} sellerId - The seller's unique identifier.
+     * @param {string} category - The post's category.
+     * @param {string} photoUrl - The URL of the post's photo.
      * @returns {Post} - The newly created Post instance.
      */
     public static create(id: string, title: string, description: string, price: string, location: string, sellerId: string, category: string, photoUrl: string): Post {
@@ -220,22 +225,20 @@ export default class Post extends AggregateRoot {
     }
 
     /**
-     * Marks the post as deleted if the provided user ID matches the owner's ID.
-     * @param {values.SellerId} sellerId - The ID of the user initiating the deletion.
+     * Marks the post as deleted if the provided seller ID matches the post's owner.
+     * 
+     * @param {values.SellerId} sellerId - The identifier of the seller initiating the deletion.
      */
     public delete(sellerId: values.SellerId): void {
-        let postId = this.state.id;
-
-        if (postId && !this.isDeleted && this.isOwnedBy(sellerId)) {
-            this.addEvent(new events.PostDeletedEvent(postId.id));
+        if (this.state.id && !this.isDeleted && this.isOwnedBy(sellerId)) {
+            this.addEvent(new events.PostDeletedEvent(this.state.id.id));
         }
     }
 
     /**
-     * Moderate the contents of a post.
-     *
-     * @public
-     * @param {ModerationAPI} moderationApi
+     * Moderates the post using the provided moderation API, applying changes if necessary.
+     * 
+     * @param {ModerationAPI} moderationApi - The moderation API to use for content review.
      */
     public moderate(moderationApi: ModerationAPI): void {
         const currentTitle = this.state.getPostTitle();
@@ -244,13 +247,15 @@ export default class Post extends AggregateRoot {
         const moderatedTitle = moderationApi.clean(currentTitle);
         const moderatedDescription = moderationApi.clean(currentDescription);
 
-        const requiredModeration = (moderatedTitle != currentTitle) || (moderatedDescription != currentDescription);
+        const requiredModeration = moderatedTitle !== currentTitle || moderatedDescription !== currentDescription;
 
-        this.addEvent(new events.PostModeratedEvent(
-            this.state.id!.id,
-            moderatedTitle,
-            moderatedDescription,
-            requiredModeration
-        ))
+        if (requiredModeration) {
+            this.addEvent(new events.PostModeratedEvent(
+                this.state.id!.id,
+                moderatedTitle,
+                moderatedDescription,
+                requiredModeration
+            ));
+        }
     }
 }

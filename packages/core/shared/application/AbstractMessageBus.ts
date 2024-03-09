@@ -2,6 +2,7 @@ import DomainEvent from "../domain/DomainEvent";
 import Command from "./Command";
 import CommandHandler from "./CommandHandler";
 import DomainEventHandler from "./DomainEventHandler";
+import Result from "./Result";
 
 
 /**
@@ -12,7 +13,7 @@ export default interface AbstractMessageBus {
      * Executes a command by locating its handler and invoking the handler's handle method.
      * @param {Command} cmd - The command to be executed.
      */
-    execute(cmd: Command): Promise<void>;
+    execute(cmd: Command): Promise<Result>;
 
     /**
      * Dispatches a domain event by invoking the handle method on all registered event handlers for the event type.

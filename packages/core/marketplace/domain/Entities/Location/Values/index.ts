@@ -1,8 +1,7 @@
 import { Id, ValueObject } from "../../../../../shared/domain/Values";
 
-
 /**
- * [placeholder]
+ * Represents a unique identifier for a location in the domain model, extending the generic Id class.
  *
  * @class LocationId
  * @typedef {LocationId}
@@ -10,16 +9,18 @@ import { Id, ValueObject } from "../../../../../shared/domain/Values";
  */
 export class LocationId extends Id {
     /**
-     * [placeholder]
+     * The unique identifier for the location.
      *
      * @public
      * @readonly
      * @type {string}
      */
     public readonly id: string;
+
     /**
-     * Creates an instance of the LocationId class.
-     * @param {string} id - The unique identifier for the User.
+     * Creates an instance of the LocationId class with a specific unique identifier.
+     *
+     * @param {string} id - The unique identifier for the location.
      */
     constructor(id: string) {
         super();
@@ -29,7 +30,7 @@ export class LocationId extends Id {
 
 
 /**
- * [placeholder]
+ * Represents the name of a location in the domain model, extending the generic ValueObject class.
  *
  * @class LocationName
  * @typedef {LocationName}
@@ -37,7 +38,7 @@ export class LocationId extends Id {
  */
 export class LocationName extends ValueObject {
     /**
-     * [placeholder]
+     * The name of the location.
      *
      * @public
      * @readonly
@@ -46,10 +47,10 @@ export class LocationName extends ValueObject {
     public readonly name: string;
     
     /**
-     * Creates an instance of LocationName.
+     * Creates an instance of LocationName with a specific name.
      *
      * @constructor
-     * @param {string} name
+     * @param {string} name - The name of the location.
      */
     constructor(name: string) {
         super();

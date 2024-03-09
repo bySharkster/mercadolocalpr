@@ -3,17 +3,18 @@ import Location from "../../domain/Entities/Location/Location";
 import { SupabaseClient } from "../../../shared/infrastructure/persistence/supabase";
 
 /**
- * Supabase-backed implementation of the LocationRepository interface.
- * Extends the SupabaseClient class for database interaction.
+ * A Supabase-backed implementation of the LocationRepository interface, 
+ * extending the SupabaseClient class for database interactions. 
+ * It provides methods to interact with location data stored in a Supabase database.
  */
 export default class SBLocationRepository extends SupabaseClient implements LocationRepository {
     
     /**
-     * [placeholder]
+     * Retrieves a Location entity by its unique identifier.
      *
      * @public
-     * @param {string} id
-     * @returns {Promise<Location>}
+     * @param {string} id - The unique identifier of the location to be retrieved.
+     * @returns {Promise<Location|null>} A promise that resolves with the Location entity if found, otherwise null.
      */
     public async get(id: string): Promise<Location|null> {
         const supabase = this.getClient('marketplace');
@@ -33,9 +34,11 @@ export default class SBLocationRepository extends SupabaseClient implements Loca
 
 
     /**
-     * Saves a Location entity and its associated events to the Supabase database.
+     * Saves a Location entity and its associated details to the Supabase database.
+     * This method inserts a new location record into the database.
+     *
      * @param {Location} location - The Location entity to be saved.
-     * @returns {Promise<void>} - A promise that resolves once the save operation is complete.
+     * @returns {Promise<void>} A promise that resolves once the save operation is complete, with no return value.
      */
     public async save(location: Location): Promise<void> {
         const supabase = this.getClient('marketplace');

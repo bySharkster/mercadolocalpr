@@ -4,6 +4,7 @@ import CommandHandler from "../../../shared/application/CommandHandler";
 import UnitOfWork from "../../../shared/application/UnitOfWork";
 import Post from "../../domain/Entities/Post/Post";
 import LocationRepository from "../../domain/Repositories/LocationRepository";
+import Result from "../../../shared/application/Result";
 
 /**
  * Command handler for processing the CreatePostCommand and creating a new post.
@@ -52,50 +53,96 @@ export default class CreatePostHandler extends CommandHandler {
      * Handles the CreatePostCommand by creating a new post entity.
      * If the post with the specified ID already exists, the command is ignored.
      * @param {CreatePostCommand} cmd - The CreatePostCommand to be handled.
-     * @returns {Promise<void>} - A Promise that resolves when the handling is complete.
+     * @returns {Promise<Result>} - A Promise that resolves when the handling is complete.
      */
-    public async handle(cmd: CreatePostCommand): Promise<void> {
+    public async handle(cmd: CreatePostCommand): Promise<Result> {
+        let locId = cmd.locationId;
 
-        this.validateLocation(cmd.locationId);
+        let location = await this.locationRepository.get(locId);
         
-        // Check if a post with the specified ID already exists
+        if(!location) {
+            return CreatePostErrors.locationNotFound(locId);
+        }
+
         let existingPostEvents = await this.unitOfWork.repository.loadEvents(cmd.postId);
 
         if (existingPostEvents.length === 0) {
-            // Create a new post entity using the provided data
-            let post = Post.create(
-                cmd.postId,
-                cmd.title,
-                cmd.description,
-                cmd.price,
-                cmd.locationId,
-                cmd.sellerId,
-                cmd.category,
-                cmd.photoUrl,
-            );
+            let post;
 
-            // Send the post for moderation using the Moderation API
+            try {
+                post = this.createPost(cmd);
+            } catch(error: any) {
+                return CreatePostErrors.invalidPost(error.message)
+            }
+
             post.moderate(this.moderationApi);
 
-            // Save the new post entity using the unit of work
             await this.unitOfWork.save(post);
             
-            // Commit changes
             this.unitOfWork.commit();
         }
+
+        return Result.success()
+    }
+
+
+    /**
+     * Create the post using the fields from the command.
+     *
+     * @private
+     * @param {CreatePostCommand} cmd
+     * @returns {Post}
+     */
+    private createPost(cmd: CreatePostCommand): Post {
+        return Post.create(
+            cmd.postId,
+            cmd.title,
+            cmd.description,
+            cmd.price,
+            cmd.locationId,
+            cmd.sellerId,
+            cmd.category,
+            cmd.photoUrl,
+        );
+    }
+
+   
+}
+
+
+/**
+ * Provides static methods for generating error results related to post creation failures.
+ * This class is used to encapsulate specific error scenarios that can occur during the
+ * post creation process, such as location not found or invalid post data.
+ *
+ * @class CreatePostErrors
+ * @typedef {CreatePostErrors}
+ */
+class CreatePostErrors {
+    /**
+     * Generates a Result object indicating failure due to the specified location ID not being found.
+     * This method is typically called when an attempt to create a post with a non-existent location ID is made.
+     *
+     * @public
+     * @static
+     * @param {string} locationId The ID of the location that was not found.
+     * @returns {Result} A Result object containing the failure message related to the missing location.
+     */
+    public static locationNotFound(locationId: string): Result {
+        return Result.failure(`Location with id '${locationId}' was not found.`);
     }
 
     /**
-     * Validate the id of the location provided.
+     * Generates a Result object indicating failure due to invalid post data.
+     * This method is used to encapsulate various validation failures that might occur
+     * during the post creation process, allowing for a consistent error handling mechanism.
      *
-     * @private
-     * @param {string} locId
-     * @returns {Promise<void>}
+     * @public
+     * @static
+     * @param {string} error A descriptive error message detailing why the post data is considered invalid.
+     * @returns {Result} A Result object containing the failure message related to the post data validation.
      */
-    private async validateLocation(locId: string): Promise<void> {
-        let loc = await this.locationRepository.get(locId);
-        
-        // Ensure that the given location is valid.
-        if(!loc) throw new Error(`Location with id '${locId}' was not found.`);
+    public static invalidPost(error: string): Result {
+        return Result.failure(error);
     }
 }

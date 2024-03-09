@@ -4,6 +4,7 @@ import CommandHandler from "../application/CommandHandler";
 import DomainEventHandler from "../application/DomainEventHandler";
 import AbstractMessageBus from "../application/AbstractMessageBus";
 import ChangeTracker from "../application/ChangeTracker";
+import Result from "../application/Result";
 
 /**
  * Interface representing a mapping of command names to their corresponding handlers.
@@ -82,14 +83,15 @@ export default class MessageBus implements AbstractMessageBus {
      * @param {Command} cmd - The command to be executed.
      * @throws {Error} - Throws an error if no handler is found for the command.
      */
-    public async execute(cmd: Command): Promise<void> {
+    public async execute(cmd: Command): Promise<Result> {
         let handler = this.getCommandHandler(cmd.constructor.name);
 
         if (!handler)
             throw new Error("No handler found");
 
-        await handler.handle(cmd);
+        let result = await handler.handle(cmd);
         await this.handleNewEvents();
+        return result;
     }
 
     /**

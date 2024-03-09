@@ -22,14 +22,15 @@ export default class CreatePostReadModelHandler extends DomainEventHandler {
      */
     public async handle(evt: PostCreatedEvent): Promise<void> {
         // Create a new post read model using the data from the event
+        
         let model = new PostModel(
             evt.id,
             evt.title,
             evt.description,
             Number(evt.price),
-            evt.location,
+            evt.locationId,
             evt.sellerId,
-            evt.category,
+            evt.categoryId,
             evt.photoUrl,
             false,  // not moderated
             evt.timestamp

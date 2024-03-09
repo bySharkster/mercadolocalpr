@@ -28,9 +28,9 @@ export default class SBPostReadModel extends SupabaseClient implements PostReadM
             created_at: post.createdAt,
             title: post.title,
             description: post.description,
-            category: post.category,
+            category_id: post.categoryId,
             price: post.price,
-            location: post.location,
+            location_id: post.locationId,
             user_id: post.sellerId,
             photo_url: post.photoUrl,
             is_moderated: post.isModerated,
@@ -45,7 +45,9 @@ export default class SBPostReadModel extends SupabaseClient implements PostReadM
     public async delete(postId: string): Promise<void> {
         const supabase = this.getClient(SBPostReadModel.DB_SCHEMA);
 
-        await supabase.from('post_view').delete().eq('uuid', postId);
+        await supabase.from('post_view')
+                      .delete()
+                      .eq('uuid', postId);
     }
 
     /**
@@ -67,9 +69,9 @@ export default class SBPostReadModel extends SupabaseClient implements PostReadM
                 data.title,
                 data.description,
                 data.price,
-                data.location,
+                data.location_id,
                 data.user_id,
-                data.category,
+                data.category_id,
                 data.photoUrl,
                 data.is_moderated,
                 data.created_at,
@@ -93,14 +95,16 @@ export default class SBPostReadModel extends SupabaseClient implements PostReadM
             title: post.title,
             description: post.description,
             price: post.price,
-            location: post.location,
+            location_id: post.locationId,
             user_id: post.sellerId,
-            category: post.category,
+            category_id: post.categoryId,
             photo_url: post.photoUrl,
             is_moderated: post.isModerated,
             created_at: post.createdAt,
         };
 
-        await supabase.from('post_view').update(data).eq('uuid', post.id);
+        await supabase.from('post_view')
+                      .update(data)
+                      .eq('uuid', post.id);
     }
 }
