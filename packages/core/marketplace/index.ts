@@ -12,6 +12,7 @@ import UnitOfWork from "../shared/application/UnitOfWork";
 import SBPostRepository from "./infrastructure/persistence/SBPostRepository";
 import SBPostReadModel from "./infrastructure/persistence/SBPostReadModelStore";
 import SBLocationRepository from "./infrastructure/persistence/SBLocationRepository";
+import SBCategoryRepository from "./infrastructure/persistence/SBCategoryRepository";
 
 /**
  * Initializes the application by configuring and registering necessary components.
@@ -23,12 +24,20 @@ export default function initialize(bus: AbstractMessageBus, config: any): void {
     // Initialize infrastructure components with Supabase integration
     const postRepository = new SBPostRepository(config.db.supabaseUrl, config.db.supabaseKey);
     const locationRepository = new SBLocationRepository(config.db.supabaseUrl, config.db.supabaseKey);
+    const categoryRepository = new SBCategoryRepository(config.db.supabaseUrl, config.db.supabaseKey);
     const postModels = new SBPostReadModel(config.db.supabaseUrl, config.db.supabaseKey);
     const moderationApi = new BadWordsModeration(config.moderation.replaceWith);
     const unitOfWork = new UnitOfWork(postRepository);
 
     // Register commands
-    bus.registerCommand(CreatePostCommand.name, new CreatePostHandler(unitOfWork, moderationApi, locationRepository));
+    
+    bus.registerCommand(CreatePostCommand.name, new CreatePostHandler(
+        unitOfWork, 
+        moderationApi, 
+        locationRepository,
+        categoryRepository,
+    ));
+
     bus.registerCommand(DeletePostCommand.name, new DeletePostHandler(unitOfWork));
 
     // Register events

@@ -201,11 +201,11 @@ export default class Post extends AggregateRoot {
      * @param {string} price - The post's price.
      * @param {string} location - The post's location.
      * @param {string} sellerId - The seller's unique identifier.
-     * @param {string} category - The post's category.
+     * @param {string} categoryId - The post's category id.
      * @param {string} photoUrl - The URL of the post's photo.
      * @returns {Post} - The newly created Post instance.
      */
-    public static create(id: string, title: string, description: string, price: string, location: string, sellerId: string, category: string, photoUrl: string): Post {
+    public static create(id: string, title: string, description: string, price: string, location: string, sellerId: string, categoryId: string, photoUrl: string): Post {
         let post = new Post();
         
         let event = new events.PostCreatedEvent(
@@ -215,7 +215,7 @@ export default class Post extends AggregateRoot {
             price,
             location,
             sellerId,
-            category,
+            categoryId,
             photoUrl
         );
 

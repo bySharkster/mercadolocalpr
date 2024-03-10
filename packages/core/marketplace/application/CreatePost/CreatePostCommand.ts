@@ -61,13 +61,13 @@ export default class CreatePostCommand extends Command {
     public readonly sellerId: string;
 
     /**
-     * The category or type of the item being posted.
+     * The category or type id of the item being posted.
      *
      * @public
      * @readonly
      * @type {string}
      */
-    public readonly category: string;
+    public readonly categoryId: string;
 
     /**
      * The URL of the photo associated with the post.
@@ -88,7 +88,7 @@ export default class CreatePostCommand extends Command {
      * @param {string} price - The price of the item being sold in the post.
      * @param {string} locationId - The location or region id associated with the post.
      * @param {string} sellerId - The unique identifier of the seller creating the post.
-     * @param {string} category - The category or type of the item being posted.
+     * @param {string} categoryId - The category or type id of the item being posted.
      * @param {string} photoUrl - The URL of the photo associated with the post.
      */
     constructor(
@@ -98,7 +98,7 @@ export default class CreatePostCommand extends Command {
         price: string,
         locationId: string,
         sellerId: string,
-        category: string,
+        categoryId: string,
         photoUrl: string
     ) {
         super();
@@ -108,7 +108,7 @@ export default class CreatePostCommand extends Command {
         this.price = price;
         this.locationId = locationId;
         this.sellerId = sellerId;
-        this.category = category;
+        this.categoryId = categoryId;
         this.photoUrl = photoUrl;
     }
 }
