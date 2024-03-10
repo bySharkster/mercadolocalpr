@@ -23,7 +23,7 @@ export default class SBPostReadModel extends SupabaseClient implements PostReadM
     public async add(post: PostModel): Promise<void> {
         const supabase = this.getClient(SBPostReadModel.DB_SCHEMA);
 
-        await supabase.from('post_view').insert({
+        await supabase.from('posts_projection').insert({
             uuid: post.id,
             created_at: post.createdAt,
             title: post.title,
@@ -45,7 +45,7 @@ export default class SBPostReadModel extends SupabaseClient implements PostReadM
     public async delete(postId: string): Promise<void> {
         const supabase = this.getClient(SBPostReadModel.DB_SCHEMA);
 
-        await supabase.from('post_view')
+        await supabase.from('posts_projection')
                       .delete()
                       .eq('uuid', postId);
     }
@@ -59,7 +59,7 @@ export default class SBPostReadModel extends SupabaseClient implements PostReadM
     public async get(postId: string): Promise<PostModel|null> {
         const supabase = this.getClient(SBPostReadModel.DB_SCHEMA);
 
-        const { data } = await supabase.from('post_view').select('*').eq('uuid', postId).single();
+        const { data } = await supabase.from('posts_projection').select('*').eq('uuid', postId).single();
                 
         let model: PostModel|null = null;
 
@@ -103,7 +103,7 @@ export default class SBPostReadModel extends SupabaseClient implements PostReadM
             created_at: post.createdAt,
         };
 
-        await supabase.from('post_view')
+        await supabase.from('posts_projection')
                       .update(data)
                       .eq('uuid', post.id);
     }
