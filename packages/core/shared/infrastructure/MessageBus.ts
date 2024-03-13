@@ -28,11 +28,12 @@ interface EventHandlerMap {
 
 /**
  * MessageBus class acts as a central communication hub for executing commands and dispatching domain events.
- * It manages the registration of command and event handlers.
+ * It manages the registration of command and event handlers and provides mechanisms for queuing and processing
+ * domain events. This class implements the singleton pattern to ensure only one instance exists throughout the application.
  */
 export default class MessageBus implements AbstractMessageBus {
     /**
-     * The message bus instance.
+     * The single instance of the MessageBus.
      *
      * @private
      * @static
@@ -54,20 +55,39 @@ export default class MessageBus implements AbstractMessageBus {
     private eventHandlers: EventHandlerMap;
 
     /**
-     * Creates an instance of the MessageBus class.
+     * A queue of domain events that have been enqueued for processing.
+     *
+     * @private
+     * @type {DomainEvent[]}
+     */
+    private enqueuedEvents: DomainEvent[];
+
+    /**
+     * Private constructor to prevent direct construction calls with the `new` operator.
      */
     private constructor() {
         this.commandHandlers = {};
         this.eventHandlers = {};
+        this.enqueuedEvents = [];
     }
 
     /**
-     * Singleton instance of the MessageBus.
+     * Enqueues a list of domain events to be processed.
+     *
+     * @public
+     * @param {DomainEvent[]} events The events to enqueue.
+     */
+    public enqueue(events: DomainEvent[]): void {
+        this.enqueuedEvents = this.enqueuedEvents.concat(events);
+    }
+
+    /**
+     * Returns the singleton instance of the MessageBus, creating it if it does not already exist.
      *
      * @public
      * @static
-     * @param {Function} initialSetup - The function to set up the initial state of the MessageBus instance.
-     * @returns {MessageBus}
+     * @param {Function} initialSetup - A function to perform initial setup of the MessageBus instance.
+     * @returns {MessageBus} The singleton instance of the MessageBus.
      */
     public static getInstance(initialSetup: Function): MessageBus {
         if (!MessageBus.instance) {
@@ -79,15 +99,18 @@ export default class MessageBus implements AbstractMessageBus {
     }
 
     /**
-     * Executes a command by locating its handler and invoking the handler's handle method.
-     * @param {Command} cmd - The command to be executed.
+     * Executes a given command by finding its corresponding handler and invoking the handler's handle method.
+     * If no handler is found for the command, an error is thrown.
+     *
+     * @param {Command} cmd - The command to execute.
      * @throws {Error} - Throws an error if no handler is found for the command.
+     * @returns {Promise<Result>} The result of executing the command.
      */
     public async execute(cmd: Command): Promise<Result> {
         let handler = this.getCommandHandler(cmd.constructor.name);
 
         if (!handler)
-            throw new Error("No handler found");
+            throw new Error("No handler found for the command.");
 
         let result = await handler.handle(cmd);
         await this.handleNewEvents();
@@ -95,7 +118,7 @@ export default class MessageBus implements AbstractMessageBus {
     }
 
     /**
-     * Handles any new events in the event queue.
+     * Handles any new events that have been generated or enqueued, processing them sequentially.
      *
      * @private
      * @returns {Promise<void>}
@@ -105,7 +128,6 @@ export default class MessageBus implements AbstractMessageBus {
 
         while (events.length > 0) {
             let evt = events.at(0);
-
             events = events.slice(1);
 
             if (evt) await this.dispatch(evt);
@@ -115,8 +137,9 @@ export default class MessageBus implements AbstractMessageBus {
     }
 
     /**
-     * Dispatches a domain event by invoking the handle method on all registered event handlers for the event type.
-     * @param {DomainEvent} evt - The domain event to be dispatched.
+     * Dispatches a domain event to all registered handlers for the event's type.
+     *
+     * @param {DomainEvent} evt - The domain event to dispatch.
      * @returns {Promise<void>}
      */
     public async dispatch(evt: DomainEvent): Promise<void> {
@@ -128,28 +151,31 @@ export default class MessageBus implements AbstractMessageBus {
     }
 
     /**
-     * Gets the command handler for a given command name.
+     * Retrieves the command handler for a specific command name, if one is registered.
+     *
+     * @private
      * @param {string} name - The name of the command.
-     * @returns {CommandHandler | undefined} - The command handler, or undefined if not found.
+     * @returns {CommandHandler | undefined} The command handler, if found; otherwise, undefined.
      */
     private getCommandHandler(name: string): CommandHandler | undefined {
         return this.commandHandlers[name];
     }
 
     /**
-     * Registers a command handler with the specified name.
+     * Registers a command handler for a specific command name.
+     *
      * @param {string} name - The name of the command.
-     * @param {CommandHandler} handler - The handler for the command.
+     * @param {CommandHandler} handler - The command handler to register.
      */
     public registerCommand(name: string, handler: CommandHandler): void {
         this.commandHandlers[name] = handler;
     }
 
     /**
-     * Registers an event handler with the specified name.
-     * If no handlers are registered for the event, it initializes an empty array for the event type.
+     * Registers an event handler for a specific event name.
+     *
      * @param {string} name - The name of the event.
-     * @param {DomainEventHandler} handler - The handler for the event.
+     * @param {DomainEventHandler} handler - The event handler to register.
      */
     public registerEvent(name: string, handler: DomainEventHandler): void {
         if (!this.eventHandlers[name]) {
@@ -160,12 +186,26 @@ export default class MessageBus implements AbstractMessageBus {
     }
 
     /**
-     * Gets any new events from the change tracker.
+     * Retrieves any new events that have been generated, combining them with events that have been previously enqueued.
      *
      * @private
-     * @returns {DomainEvent[]}
+     * @returns {DomainEvent[]} The list of new and enqueued events.
      */
     private getNewEvents(): DomainEvent[] {
-        return ChangeTracker.getNewEvents();
+        let newEvents = ChangeTracker.getNewEvents();
+        newEvents = newEvents.concat(this.popEnqueuedEvents());
+        return newEvents;
+    }
+
+    /**
+     * Removes and returns all events currently enqueued in the MessageBus.
+     *
+     * @private
+     * @returns {DomainEvent[]} The list of enqueued events.
+     */
+    private popEnqueuedEvents(): DomainEvent[] {
+        let events = this.enqueuedEvents;
+        this.enqueuedEvents = [];
+        return events;
     }
 }

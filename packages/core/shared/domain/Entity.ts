@@ -5,6 +5,12 @@ import DomainEvent from "./DomainEvent";
  * Entities are objects with a distinct identity that runs through time and different states.
  */
 export abstract class Entity {
+    /**
+     * Events that occur within the entity.
+     *
+     * @private
+     * @type {DomainEvent[]}
+     */
     private domainEvents: DomainEvent[];
 
     /**
@@ -36,6 +42,18 @@ export abstract class Entity {
     public clearEvents(): void {
         this.domainEvents = [];
     }
+
+    /**
+     * Get and clear the list of domain events.
+     *
+     * @public
+     * @returns {DomainEvent[]}
+     */
+    public popEvents(): DomainEvent[] {
+        let events = this.domainEvents;
+        this.domainEvents = [];
+        return events;
+    }
     
 }
 
@@ -58,5 +76,5 @@ export abstract class AggregateRoot extends Entity {
      * Abstract method to be implemented by subclasses to apply domain events.
      * @param {DomainEvent} event - The domain event to be applied.
      */
-    protected abstract apply(event: DomainEvent): void;
+    protected apply(event: DomainEvent): void {}
 }

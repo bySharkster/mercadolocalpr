@@ -10,6 +10,14 @@ import Result from "./Result";
  */
 export default interface AbstractMessageBus {
     /**
+     * Add domain events to the message bus queue.
+     *
+     * @param {DomainEvent[]} arg0
+     * @returns {unknown}
+     */
+    enqueue(arg0: DomainEvent[]): void;
+
+    /**
      * Executes a command by locating its handler and invoking the handler's handle method.
      * @param {Command} cmd - The command to be executed.
      */
