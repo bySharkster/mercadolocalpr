@@ -13,6 +13,15 @@ import SBPostRepository from "./infrastructure/persistence/SBPostRepository";
 import SBPostReadModel from "./infrastructure/persistence/SBPostReadModelStore";
 import SBLocationRepository from "./infrastructure/persistence/SBLocationRepository";
 import SBCategoryRepository from "./infrastructure/persistence/SBCategoryRepository";
+import MarketplaceAPI from "./integration";
+import MarketplaceService from "./integration/contracts";
+import PostRepository from "./domain/Repositories/PostRepository";
+
+
+function getPostRepository(config: any): PostRepository {
+    return new SBPostRepository(config.db.supabaseUrl, config.db.supabaseKey)
+}
+
 
 /**
  * Initializes the application by configuring and registering necessary components.
@@ -22,7 +31,7 @@ import SBCategoryRepository from "./infrastructure/persistence/SBCategoryReposit
  */
 export default function initialize(bus: AbstractMessageBus, config: any): void {
     // Initialize infrastructure components with Supabase integration
-    const postRepository = new SBPostRepository(config.db.supabaseUrl, config.db.supabaseKey);
+    const postRepository = getPostRepository(config);
     const locationRepository = new SBLocationRepository(config.db.supabaseUrl, config.db.supabaseKey);
     const categoryRepository = new SBCategoryRepository(config.db.supabaseUrl, config.db.supabaseKey);
     const postModels = new SBPostReadModel(config.db.supabaseUrl, config.db.supabaseKey);
@@ -44,4 +53,12 @@ export default function initialize(bus: AbstractMessageBus, config: any): void {
     bus.registerEvent(PostCreatedEvent.name, new CreatePostReadModelHandler(postModels));
     bus.registerEvent(PostModeratedEvent.name, new PostModeratedHandler(postModels));
     bus.registerEvent(PostDeletedEvent.name, new DeletePostReadModelHandler(postModels));
+}
+
+
+
+export function marketplaceApiFactory(config: any): MarketplaceService {
+    let postRepository = getPostRepository(config);
+    
+    return new MarketplaceAPI(postRepository);
 }

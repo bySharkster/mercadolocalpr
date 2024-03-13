@@ -13,10 +13,10 @@ export class ReportedPostId extends Id {
     /**
      * The unique identifier for a reported post.
      *
-     * @private
+     * @public
      * @type {string}
      */
-    private id: string;
+    public readonly id: string;
     
     /**
      * Creates an instance of ReportedPostId, encapsulating the logic for reported post
@@ -43,10 +43,10 @@ export class ContentFlagId extends Id {
     /**
      * The unique identifier for a content flag.
      *
-     * @private
+     * @public
      * @type {string}
      */
-    private id: string;
+    public readonly id: string;
 
     /**
      * Creates an instance of ContentFlagId, encapsulating the identifier for a content flag
@@ -73,10 +73,10 @@ export class UserId extends Id {
     /**
      * The unique identifier for a user.
      *
-     * @private
+     * @public
      * @type {string}
      */
-    private id: string;
+    public readonly id: string;
 
     /**
      * Creates an instance of UserId, providing a mechanism for uniquely identifying
@@ -104,10 +104,10 @@ export class ContentFlagReason extends ValueObject {
     /**
      * The reason for the content flag, representing the rationale behind flagging a piece of content.
      *
-     * @private
+     * @public
      * @type {string}
      */
-    private reason: string;
+    public readonly reason: string;
 
     /**
      * Creates an instance of ContentFlagReason, capturing the reason a content was flagged.
@@ -134,10 +134,10 @@ export class ContentFlagTimestamp extends ValueObject {
     /**
      * The timestamp marking when the content was flagged.
      *
-     * @private
+     * @public
      * @type {string}
      */
-    private timestamp: string;
+    public readonly timestamp: string;
 
     /**
      * Creates an instance of ContentFlagTimestamp, marking the exact moment a piece of content
