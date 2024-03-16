@@ -73,7 +73,7 @@ export default class ReportPostHandler extends CommandHandler {
     public async handle(cmd: ReportPostCommand): Promise<Result> {
         let post = await this.getPost(cmd.postId);
 
-        if(!post) return ReportPostErrors.postNotFound(cmd.postId)
+        if(!post) return ReportPostErrors.postNotFound(cmd.postId);
         
         post.flag(cmd.flagId, cmd.userId, cmd.reason);
 
@@ -93,11 +93,14 @@ export default class ReportPostHandler extends CommandHandler {
      * @returns {Promise<ReportedPost|null>} The reported post or null if it doesn't exist.
      */
     private async getPost(id: string): Promise<ReportedPost|null> {
-        let post = await this.reportedPosts.get(id);
-        
-        // Get the post from the marketplace context if not found in moderation data.
-        if(!post && await this.marketplace.postExists(id))
-            post = new ReportedPost(id);
+        let post: ReportedPost|null = null;
+        let events = await this.reportedPosts.loadEvents(id);
+
+        if(events.length > 0) {
+            post = new ReportedPost(events);
+        } else if(await this.marketplace.postExists(id)) {
+            post = ReportedPost.create(id);
+        }
 
         return post;
     }
