@@ -1,7 +1,9 @@
 import MarketplaceService from "../marketplace/integration/contracts";
 import AbstractMessageBus from "../shared/application/AbstractMessageBus";
+import NotifyReportThresholdReached from "./application/ReportPost/NotifyReportThresholdReached";
 import ReportPostCommand from "./application/ReportPost/ReportPostCommand";
 import ReportPostHandler from "./application/ReportPost/ReportPostHandler";
+import { ReportThresholdReached } from "./domain/Events";
 import SBReportedPostsRepository from "./infrastructure/persistence/SBReportedPostsRepository";
 
 /**
@@ -35,4 +37,11 @@ export default function initialize(bus: AbstractMessageBus, config: any, marketp
             bus
         )
     );
+
+    bus.registerEvent(
+        ReportThresholdReached.name,
+        new NotifyReportThresholdReached(
+            marketplace,
+        )
+    )
 }
