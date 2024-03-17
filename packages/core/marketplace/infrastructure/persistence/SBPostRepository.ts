@@ -26,6 +26,7 @@ export default class SBPostRepository extends SupabaseClient implements PostRepo
 
         data = data ? data : [];
 
+        // TODO: Create an event factory to encapsulate event creation logic.
         for (const row of data) {
             if (row.eventType === events.PostCreatedEvent.name) {
                 domainEvents.push(events.PostCreatedEvent.fromJson(row));
@@ -35,6 +36,8 @@ export default class SBPostRepository extends SupabaseClient implements PostRepo
                 domainEvents.push(events.PostClosedEvent.fromJson(row))
             } else if(row.eventType === events.PostModeratedEvent.name) {
                 domainEvents.push(events.PostModeratedEvent.fromJson(row))
+            } else if(row.eventType === events.CommentAddedToPostEvent.name) {
+                domainEvents.push(events.CommentAddedToPostEvent.fromJson(row))
             } else {
                 throw new Error(`Unhandled event '${row.eventType}'`)
             }

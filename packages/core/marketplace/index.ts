@@ -18,6 +18,8 @@ import MarketplaceService from "./integration/contracts";
 import ClosePostCommand from "./application/ClosePost/ClosePostCommand";
 import ClosePostHandler from "./application/ClosePost/ClosePostHandler";
 import PostClosedHandler from "./application/UpdatePost/PostClosedHandler";
+import AddCommentCommand from "./application/AddComment/AddCommentCommand";
+import AddCommentHandler from "./application/AddComment/AddCommentHandler";
 
 
 /**
@@ -69,6 +71,7 @@ export default function initialize(bus: AbstractMessageBus, config: any): void {
 
     bus.registerCommand(DeletePostCommand.name, new DeletePostHandler(unitOfWork));
     bus.registerCommand(ClosePostCommand.name, new ClosePostHandler(postRepository, bus));
+    bus.registerCommand(AddCommentCommand.name, new AddCommentHandler(postRepository, bus));
 
     // Event registration
     bus.registerEvent(PostCreatedEvent.name, new CreatePostReadModelHandler(postModels));
