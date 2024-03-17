@@ -3,7 +3,7 @@ import CreatePostCommand from "./application/CreatePost/CreatePostCommand";
 import DeletePostCommand from "./application/DeletePost/DeletePostCommand";
 import CreatePostHandler from "./application/CreatePost/CreatePostHandler";
 import { DeletePostHandler } from "./application/DeletePost/DeletePostHandler";
-import { PostClosedEvent, PostCreatedEvent, PostDeletedEvent, PostModeratedEvent } from "./domain/Events";
+import { CommentAddedToPostEvent, PostClosedEvent, PostCreatedEvent, PostDeletedEvent, PostModeratedEvent } from "./domain/Events";
 import CreatePostReadModelHandler from "./application/CreatePost/CreatePostReadModelHandler";
 import PostModeratedHandler from "./application/UpdatePost/PostModeratedHandler";
 import DeletePostReadModelHandler from "./application/DeletePost/DeletePostReadModelHandler";
@@ -20,6 +20,8 @@ import ClosePostHandler from "./application/ClosePost/ClosePostHandler";
 import PostClosedHandler from "./application/UpdatePost/PostClosedHandler";
 import AddCommentCommand from "./application/AddComment/AddCommentCommand";
 import AddCommentHandler from "./application/AddComment/AddCommentHandler";
+import AddCommentToReadModelHandler from "./application/AddComment/AddCommentToReadModelHandler";
+import SBPostCommentsModelStore from "./infrastructure/persistence/SBPostCommentsModelStore";
 
 
 /**
@@ -59,6 +61,7 @@ export default function initialize(bus: AbstractMessageBus, config: any): void {
     const postModels = getPostReadStore(config);
     const moderationApi = new BadWordsModeration(config.moderation.replaceWith);
     const unitOfWork = new UnitOfWork(postRepository);
+    const postComments = new SBPostCommentsModelStore(config.db.supabaseUrl, config.db.supabaseKey);
 
     // Command registration
     
@@ -78,6 +81,7 @@ export default function initialize(bus: AbstractMessageBus, config: any): void {
     bus.registerEvent(PostModeratedEvent.name, new PostModeratedHandler(postModels));
     bus.registerEvent(PostDeletedEvent.name, new DeletePostReadModelHandler(postModels));
     bus.registerEvent(PostClosedEvent.name, new PostClosedHandler(postModels));
+    bus.registerEvent(CommentAddedToPostEvent.name, new AddCommentToReadModelHandler(postComments))
 }
 
 
