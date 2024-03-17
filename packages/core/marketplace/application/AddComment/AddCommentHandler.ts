@@ -58,8 +58,6 @@ export default class AddCommentHandler extends CommandHandler {
         if(events.length === 0) return AddCommentErrors.postNotFound(cmd.postId);
 
         const post = new Post(events);
-
-        console.log(post);
         
         try {
             post.comment(cmd.commentorId, cmd.commentId, cmd.comment);
