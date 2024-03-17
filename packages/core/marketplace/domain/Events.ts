@@ -205,12 +205,75 @@ export class PostModeratedEvent extends DomainEvent {
      * @returns {PostModeratedEvent} - The created PostModeratedEvent instance.
      */
     public static fromJson(obj: any): PostModeratedEvent {
+        const data = JSON.parse(obj.data);
+
         return new PostModeratedEvent(
-            obj.postId,
-            obj.moderatedTitle,
-            obj.moderatedDescription,
-            obj.requiredModeration,
+            data.postId,
+            data.moderatedTitle,
+            data.moderatedDescription,
+            data.requiredModeration,
             obj.timestamp
         );
+    }
+}
+
+
+/**
+ * Event indicating that a post has been closed.
+ * Extends the DomainEvent class, adding specific information about the post closure,
+ * including the time the closure occurred. Can be serialized to and from JSON.
+ *
+ * @class PostClosedEvent
+ * @typedef {PostClosedEvent}
+ * @extends {DomainEvent}
+ */
+export class PostClosedEvent extends DomainEvent {
+    
+    /**
+     * Creates an instance of PostClosedEvent.
+     * Initializes the event with the closure timestamp.
+     *
+     * @constructor
+     * @param {string} postId The if of the post that was closed.
+     * @param {string} closedAt The timestamp when the post was closed.
+     */
+    constructor(
+        public readonly postId: string,
+        public readonly closedAt: string,
+        timestamp?: string,
+    ) {
+        super(timestamp);
+    }
+
+    /**
+     * Serializes the PostClosedEvent instance to a JSON string.
+     * Useful for logging or sending the event over a network.
+     *
+     * @public
+     * @returns {string} JSON string representation of the PostClosedEvent instance.
+     */
+    public toJson(): string {
+        return JSON.stringify({
+            postId: this.postId,
+            closedAt: this.closedAt,
+        });
+    }
+
+    /**
+     * Deserializes a JSON object to a PostClosedEvent instance.
+     * Useful for creating an event instance from data received over a network or from logs.
+     *
+     * @public
+     * @param {*} obj JSON object containing the 'closedAt' field.
+     * @returns {PostClosedEvent} An instance of PostClosedEvent with the data from the JSON object.
+     */
+    public static fromJson(obj: any): PostClosedEvent {
+        const data = JSON.parse(obj.data);
+
+        return new PostClosedEvent(
+            data.postId,
+            data.closedAt,
+            obj.timestamp
+        )
     }
 }

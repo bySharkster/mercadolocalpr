@@ -34,6 +34,7 @@ export default class SBPostReadModel extends SupabaseClient implements PostReadM
             user_id: post.sellerId,
             photo_url: post.photoUrl,
             is_moderated: post.isModerated,
+            is_closed: post.isClosed,
         });
     }
 
@@ -74,6 +75,7 @@ export default class SBPostReadModel extends SupabaseClient implements PostReadM
                 data.category_id,
                 data.photoUrl,
                 data.is_moderated,
+                data.is_closed,
                 data.created_at,
             );
         }
@@ -100,6 +102,7 @@ export default class SBPostReadModel extends SupabaseClient implements PostReadM
             category_id: post.categoryId,
             photo_url: post.photoUrl,
             is_moderated: post.isModerated,
+            is_closed: post.isClosed,
             created_at: post.createdAt,
         };
 

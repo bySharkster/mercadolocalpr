@@ -27,6 +27,14 @@ class PostState {
     public isModerated: boolean;
 
     /**
+     * [placeholder]
+     *
+     * @public
+     * @type {boolean}
+     */
+    public isClosed: boolean;
+
+    /**
      * The location ID associated with the post, if any.
      *
      * @public
@@ -52,6 +60,7 @@ class PostState {
     ) {
         this.isDeleted = false;
         this.isModerated = false;
+        this.isClosed = false;
     }
 
     /**
@@ -66,6 +75,8 @@ class PostState {
             this.applyPostDeletedEvent(event);
         else if (event instanceof events.PostModeratedEvent)
             this.applyPostModeratedEvent(event);
+        else if (event instanceof events.PostClosedEvent)
+            this.applyPostClosedEvent(event);
         else
             throw new Error(`Unhandled event '${event.constructor.name}'`);
     }
@@ -84,6 +95,7 @@ class PostState {
         this.locationId = new LocationId(event.locationId);
         this.isModerated = false;
         this.isDeleted = false;
+        this.isClosed = false;
     }
 
     /**
@@ -108,6 +120,15 @@ class PostState {
             event.moderatedDescription
         );
         this.isModerated = true;
+    }
+
+    /**
+     * Marks the post as closed in response to a PostClosedEvent.
+     *
+     * @param {events.PostClosedEvent} event The event to apply.
+     */
+    private applyPostClosedEvent(event: events.PostClosedEvent) {
+        this.isClosed = true;
     }
 
     /**
@@ -153,6 +174,8 @@ export default class Post extends AggregateRoot {
         this.state = new PostState();
 
         if (events) events.forEach(e => this.apply(e));
+
+        this.clearEvents();
     }
 
     /**
@@ -171,6 +194,15 @@ export default class Post extends AggregateRoot {
      */
     public get isDeleted(): boolean {
         return this.state.isDeleted;
+    }
+
+    /**
+     * Indicates whether the post has been closed.
+     * 
+     * @returns {boolean} - True if the post is deleted, otherwise false.
+     */
+    public get isClosed(): boolean {
+        return this.state.isClosed;
     }
 
     /**
@@ -232,6 +264,21 @@ export default class Post extends AggregateRoot {
     public delete(sellerId: values.SellerId): void {
         if (this.state.id && !this.isDeleted && this.isOwnedBy(sellerId)) {
             this.addEvent(new events.PostDeletedEvent(this.state.id.id));
+        }
+    }
+
+    /**
+     * Closes the post if it is owned by the specified seller and not already deleted.
+     * This method is intended to be used for ending the lifecycle of a post in a manner different from deletion,
+     * such as finalizing a sale or otherwise removing it from active listings without marking it as deleted.
+     *
+     * @public
+     * @param {values.SellerId} sellerId The identifier of the seller initiating the close action.
+     */
+    public close(sellerId: values.SellerId): void {
+        if(this.state.id && !this.isDeleted && !this.isClosed && this.isOwnedBy(sellerId)) {
+            const closedAt = new Date().toISOString();
+            this.addEvent(new events.PostClosedEvent(this.state.id.id, closedAt))
         }
     }
 

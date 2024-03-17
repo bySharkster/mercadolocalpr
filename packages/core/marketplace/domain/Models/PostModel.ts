@@ -48,6 +48,11 @@ export default class PostModel {
     public isModerated: boolean;
 
     /**
+     * @type {boolean} - Flag indictating if the post was moderated.
+     */
+    public isClosed: boolean;
+
+    /**
      * @type {string} - The timestamp when the post was created.
      */
     public createdAt: string;
@@ -62,6 +67,7 @@ export default class PostModel {
      * @param {string} sellerId - The unique identifier of the user who created the post.
      * @param {string} categoryId - The category id of the post.
      * @param {string} photoUrl - The URL of the photo associated with the post.
+     * @param {boolean} isClosed - Flag indictating if the post was closed.
      * @param {boolean} isModerated - Flag indictating if the post was moderated.
      * @param {string} createdAt - The timestamp when the post was created.
      */
@@ -75,6 +81,7 @@ export default class PostModel {
         categoryId: string,
         photoUrl: string,
         isModerated: boolean,
+        isClosed: boolean,
         createdAt: string,
     ) {
         this.id = id;
@@ -86,6 +93,7 @@ export default class PostModel {
         this.categoryId = categoryId;
         this.photoUrl = photoUrl;
         this.isModerated = isModerated;
+        this.isClosed = isClosed;
         this.createdAt = createdAt;
     }
 }

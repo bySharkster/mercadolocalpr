@@ -31,6 +31,12 @@ export default class SBPostRepository extends SupabaseClient implements PostRepo
                 domainEvents.push(events.PostCreatedEvent.fromJson(row));
             } else if (row.eventType === events.PostDeletedEvent.name) {
                 domainEvents.push(events.PostDeletedEvent.fromJson(row));
+            } else if(row.eventType === events.PostClosedEvent.name) {
+                domainEvents.push(events.PostClosedEvent.fromJson(row))
+            } else if(row.eventType === events.PostModeratedEvent.name) {
+                domainEvents.push(events.PostModeratedEvent.fromJson(row))
+            } else {
+                throw new Error(`Unhandled event '${row.eventType}'`)
             }
         }
 

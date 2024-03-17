@@ -3,7 +3,7 @@ import CreatePostCommand from "./application/CreatePost/CreatePostCommand";
 import DeletePostCommand from "./application/DeletePost/DeletePostCommand";
 import CreatePostHandler from "./application/CreatePost/CreatePostHandler";
 import { DeletePostHandler } from "./application/DeletePost/DeletePostHandler";
-import { PostCreatedEvent, PostDeletedEvent, PostModeratedEvent } from "./domain/Events";
+import { PostClosedEvent, PostCreatedEvent, PostDeletedEvent, PostModeratedEvent } from "./domain/Events";
 import CreatePostReadModelHandler from "./application/CreatePost/CreatePostReadModelHandler";
 import PostModeratedHandler from "./application/UpdatePost/PostModeratedHandler";
 import DeletePostReadModelHandler from "./application/DeletePost/DeletePostReadModelHandler";
@@ -15,6 +15,9 @@ import SBLocationRepository from "./infrastructure/persistence/SBLocationReposit
 import SBCategoryRepository from "./infrastructure/persistence/SBCategoryRepository";
 import MarketplaceAPI from "./integration";
 import MarketplaceService from "./integration/contracts";
+import ClosePostCommand from "./application/ClosePost/ClosePostCommand";
+import ClosePostHandler from "./application/ClosePost/ClosePostHandler";
+import PostClosedHandler from "./application/UpdatePost/PostClosedHandler";
 
 
 /**
@@ -65,11 +68,13 @@ export default function initialize(bus: AbstractMessageBus, config: any): void {
     ));
 
     bus.registerCommand(DeletePostCommand.name, new DeletePostHandler(unitOfWork));
+    bus.registerCommand(ClosePostCommand.name, new ClosePostHandler(postRepository, bus));
 
     // Event registration
     bus.registerEvent(PostCreatedEvent.name, new CreatePostReadModelHandler(postModels));
     bus.registerEvent(PostModeratedEvent.name, new PostModeratedHandler(postModels));
     bus.registerEvent(PostDeletedEvent.name, new DeletePostReadModelHandler(postModels));
+    bus.registerEvent(PostClosedEvent.name, new PostClosedHandler(postModels));
 }
 
 
