@@ -277,3 +277,75 @@ export class PostClosedEvent extends DomainEvent {
         )
     }
 }
+
+
+/**
+ * Represents an event where a comment is added to a post, extending the DomainEvent class.
+ * This event captures all necessary information about the comment and its association with a specific post.
+ *
+ * @class CommentAddedToPostEvent
+ * @typedef {CommentAddedToPostEvent}
+ * @extends {DomainEvent}
+ */
+export class CommentAddedToPostEvent extends DomainEvent {
+    /**
+     * Initializes a new instance of the CommentAddedToPostEvent class with details about the comment added to the post.
+     *
+     * @constructor
+     * @param {string} postId The unique identifier of the post to which the comment is added.
+     * @param {string} commentorId The unique identifier of the user who added the comment.
+     * @param {string} commentId The unique identifier of the comment.
+     * @param {string} comment The content of the comment.
+     * @param {boolean} isSeller Indicates whether the commenter is the seller.
+     * @param {?string} [timestamp] The timestamp when the comment was added. Optional.
+     */
+    constructor(
+        public readonly postId: string,
+        public readonly commentorId: string,
+        public readonly commentId: string,
+        public readonly comment: string,
+        public readonly isSeller: boolean,
+        timestamp?: string
+    ) {
+        super(timestamp);
+    }
+    
+    /**
+     * Converts the event data to a JSON string.
+     * Useful for serialization or logging purposes.
+     *
+     * @public
+     * @returns {string} A JSON string representation of the event data.
+     */
+    public toJson(): string {
+        return JSON.stringify({
+            postId: this.postId,
+            commentorId: this.commentorId,
+            commentId: this.commentId,
+            comment: this.comment,
+            isSeller: this.isSeller,
+        });
+    }
+
+    /**
+     * Constructs a CommentAddedToPostEvent instance from a JSON object.
+     * This method is used to deserialize the event data from a JSON representation.
+     *
+     * @public
+     * @static
+     * @param {*} obj A JSON object containing event data, including a data string and optionally a timestamp.
+     * @returns {CommentAddedToPostEvent} An instance of CommentAddedToPostEvent constructed from the provided JSON data.
+     */
+    public static fromJson(obj: any): CommentAddedToPostEvent {
+        const data = JSON.parse(obj.data);
+
+        return new CommentAddedToPostEvent(
+            data.postId,
+            data.commentorId,
+            data.commentId,
+            data.comment,
+            data.isSeller,
+            obj.timestamp,
+        );
+    }
+}

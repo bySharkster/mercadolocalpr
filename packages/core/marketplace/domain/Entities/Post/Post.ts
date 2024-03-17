@@ -5,6 +5,7 @@ import ModerationAPI from "../../ModerationAPI";
 import DomainEvent from "../../../../shared/domain/DomainEvent";
 import { AggregateRoot } from "../../../../shared/domain/Entity";
 import { LocationId } from "../Location/Values";
+import PostComment from "../PostComment/PostComment";
 
 /**
  * Represents the state of a Post aggregate within the domain, encapsulating all properties and state transitions through domain events.
@@ -27,7 +28,7 @@ class PostState {
     public isModerated: boolean;
 
     /**
-     * [placeholder]
+     * Indicates whether the post is closed.
      *
      * @public
      * @type {boolean}
@@ -41,6 +42,14 @@ class PostState {
      * @type {?LocationId}
      */
     public locationId?: LocationId;
+    
+    /**
+     * A list of comments associated with the post.
+     *
+     * @public
+     * @type {PostComment[]}
+     */
+    public comments: PostComment[];
 
     /**
      * Initializes a new instance of the PostState class with optional initial property values.
@@ -61,6 +70,7 @@ class PostState {
         this.isDeleted = false;
         this.isModerated = false;
         this.isClosed = false;
+        this.comments = [];
     }
 
     /**
@@ -77,6 +87,8 @@ class PostState {
             this.applyPostModeratedEvent(event);
         else if (event instanceof events.PostClosedEvent)
             this.applyPostClosedEvent(event);
+        else if (event instanceof events.CommentAddedToPostEvent)
+            this.applyCommentAddedToPostEvent(event);
         else
             throw new Error(`Unhandled event '${event.constructor.name}'`);
     }
@@ -125,10 +137,24 @@ class PostState {
     /**
      * Marks the post as closed in response to a PostClosedEvent.
      *
-     * @param {events.PostClosedEvent} event The event to apply.
+     * @param {events.PostClosedEvent} event - The event to apply.
      */
     private applyPostClosedEvent(event: events.PostClosedEvent) {
         this.isClosed = true;
+    }
+
+    /**
+     * Adds a new comment to the post in response to a CommentAddedToPostEvent.
+     *
+     * @private
+     * @param {events.CommentAddedToPostEvent} event - The event indicating a new comment has been added.
+     */
+    private applyCommentAddedToPostEvent(event: events.CommentAddedToPostEvent) {
+        this.comments.push(new PostComment(
+            event.commentId,
+            event.commentorId,
+            event.comment,
+        ));
     }
 
     /**
@@ -151,6 +177,7 @@ class PostState {
         return this.postInfo!.description;
     }
 }
+
 
 /**
  * The Post aggregate root, encapsulating the state and behaviors of a Post entity.
@@ -302,6 +329,39 @@ export default class Post extends AggregateRoot {
                 moderatedTitle,
                 moderatedDescription,
                 requiredModeration
+            ));
+        }
+    }
+
+    /**
+     * Adds a comment to the post, assuming the post is not closed or deleted.
+     * Throws an error if the post is closed or deleted. Otherwise, it triggers an event
+     * to add the comment, ensuring the comment does not already exist.
+     *
+     * @public
+     * @param {string} commentorId - The ID of the commenter.
+     * @param {string} commentId - The unique identifier for the new comment.
+     * @param {string} comment - The content of the comment.
+     * @throws {Error} If the post is closed or deleted.
+     */
+    public comment(commentorId: string, commentId: string, comment: string): void {
+        
+        if(this.isClosed || this.isDeleted) {
+            throw new Error("Cannot add a comment to a closed/deleted post.")
+        }
+
+        const postId = this.state.id!.id;
+        const isSeller = this.isOwnedBy(new values.SellerId(commentorId));
+
+        const commentExists = this.state.comments.filter(c => c.getId() == commentId).length > 0;
+        
+        if(!commentExists) {
+            this.addEvent(new events.CommentAddedToPostEvent(
+                postId,
+                commentorId,
+                commentId,
+                comment,
+                isSeller
             ));
         }
     }
