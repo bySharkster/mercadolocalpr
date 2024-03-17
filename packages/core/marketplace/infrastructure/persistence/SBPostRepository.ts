@@ -54,6 +54,8 @@ export default class SBPostRepository extends SupabaseClient implements PostRepo
     public async save(post: Post): Promise<void> {
         const supabase = this.getClient('marketplace');
 
+        const insertions = [];
+
         for(const e of post.getEvents()) {
             const payload = {
                 postId: post.getId(),
@@ -63,7 +65,9 @@ export default class SBPostRepository extends SupabaseClient implements PostRepo
                 data: e.toJson()
             };
 
-            await supabase.from('posts_events').insert(payload);
+            insertions.push(supabase.from('posts_events').insert(payload));
         }
+
+        await Promise.all(insertions);
     }
 }
