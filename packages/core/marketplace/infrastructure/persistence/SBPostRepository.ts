@@ -19,8 +19,8 @@ export default class SBPostRepository extends SupabaseClient implements PostRepo
         const supabase = this.getClient("marketplace");
 
         let { data } = await supabase.from('posts_events')
-                                     .select("postId, eventType, timestamp, data")
-                                     .eq("postId", id);
+                                     .select("*")
+                                     .eq("post_id", id);
         
         let domainEvents: DomainEvent[] = [];
 
@@ -28,18 +28,18 @@ export default class SBPostRepository extends SupabaseClient implements PostRepo
 
         // TODO: Create an event factory to encapsulate event creation logic.
         for (const row of data) {
-            if (row.eventType === events.PostCreatedEvent.name) {
+            if (row.event_type === events.PostCreatedEvent.name) {
                 domainEvents.push(events.PostCreatedEvent.fromJson(row));
-            } else if (row.eventType === events.PostDeletedEvent.name) {
+            } else if (row.event_type === events.PostDeletedEvent.name) {
                 domainEvents.push(events.PostDeletedEvent.fromJson(row));
-            } else if(row.eventType === events.PostClosedEvent.name) {
+            } else if(row.event_type === events.PostClosedEvent.name) {
                 domainEvents.push(events.PostClosedEvent.fromJson(row))
-            } else if(row.eventType === events.PostModeratedEvent.name) {
+            } else if(row.event_type === events.PostModeratedEvent.name) {
                 domainEvents.push(events.PostModeratedEvent.fromJson(row))
-            } else if(row.eventType === events.CommentAddedToPostEvent.name) {
+            } else if(row.event_type === events.CommentAddedToPostEvent.name) {
                 domainEvents.push(events.CommentAddedToPostEvent.fromJson(row))
             } else {
-                throw new Error(`Unhandled event '${row.eventType}'`)
+                throw new Error(`Unhandled event '${row.event_type}'`)
             }
         }
 
@@ -58,9 +58,9 @@ export default class SBPostRepository extends SupabaseClient implements PostRepo
 
         for(const e of post.getEvents()) {
             const payload = {
-                postId: post.getId(),
-                postType: post.constructor.name,
-                eventType: e.constructor.name,
+                post_id: post.getId(),
+                post_type: post.constructor.name,
+                event_type: e.constructor.name,
                 timestamp: e.timestamp,
                 data: e.toJson()
             };

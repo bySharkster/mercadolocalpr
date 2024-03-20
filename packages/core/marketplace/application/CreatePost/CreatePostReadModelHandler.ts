@@ -32,7 +32,7 @@ export default class CreatePostReadModelHandler extends DomainEventHandler {
             evt.sellerId,
             evt.categoryId,
             evt.photoUrl,
-            false,  // not moderated
+            true,  // moderated
             false, // not closed
             evt.timestamp
         );

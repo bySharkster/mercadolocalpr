@@ -2,73 +2,77 @@ import DeletePostCommand from "./DeletePostCommand";
 import Post from "../../domain/Entities/Post/Post";
 import { SellerId } from "../../domain/Entities/Post/Values";
 import CommandHandler from "../../../shared/application/CommandHandler";
-import UnitOfWork from "../../../shared/application/UnitOfWork";
 import Result from "../../../shared/application/Result";
+import PostRepository from "../../domain/Repositories/PostRepository";
+import AbstractMessageBus from "../../../shared/application/AbstractMessageBus";
 
 /**
- * Handles the execution of a `DeletePostCommand`, facilitating the deletion of a post in the system.
- * Inherits from the `CommandHandler` abstract class and utilizes the UnitOfWork pattern for transaction management.
+ * Handles the deletion of posts in response to DeletePostCommands. Extends the CommandHandler to
+ * process specific commands related to post deletion, leveraging the PostRepository for data persistence
+ * and an AbstractMessageBus for event handling.
+ * @class DeletePostHandler
+ * @extends {CommandHandler}
  */
 export class DeletePostHandler extends CommandHandler {
     /**
-     * Represents a unit of work instance for managing database transactions,
-     * particularly for operations related to the deletion of a post.
-     *
+     * Repository for managing persistence operations for posts, used to access and modify post data.
      * @private
-     * @type {UnitOfWork}
+     * @type {PostRepository}
      */
-    private unitOfWork: UnitOfWork
+    private postRepository: PostRepository
 
     /**
-     * Constructs an instance of `DeletePostHandler` with a specific unit of work.
-     * This unit of work is used throughout the deletion process to ensure transactional integrity.
-     *
-     * @param {UnitOfWork} unitOfWork - The unit of work for managing transactions.
+     * The message bus for handling domain events, facilitating loose coupling between components by using events.
+     * @private
+     * @type {AbstractMessageBus}
      */
-    constructor(unitOfWork: UnitOfWork) {
+    private messageBus: AbstractMessageBus
+
+    /**
+     * Initializes a new instance of the DeletePostHandler with necessary dependencies for post deletion logic.
+     * @param {PostRepository} postRepository The repository for post data operations.
+     * @param {AbstractMessageBus} messageBus The system's message bus for event handling.
+     */
+    constructor(postRepository: PostRepository, messageBus: AbstractMessageBus) {
         super();
-        this.unitOfWork = unitOfWork
+        this.postRepository = postRepository
+        this.messageBus = messageBus
     }
 
     /**
-     * Executes the post deletion process by handling the provided `DeletePostCommand`.
-     * It involves loading the post's events, recreating the post entity, marking it as deleted,
-     * and persisting the changes within a transactional context.
-     *
-     * @param {DeletePostCommand} cmd - The command object containing the details necessary for post deletion.
-     * @throws {PostNotFoundError} - This exception is thrown if the post specified in the command is not found.
-     * @returns {Promise<Result>} - The result of the delete operation, encapsulating success or failure.
+     * Executes the deletion logic for a post by processing a DeletePostCommand. Validates the existence
+     * of the post and marks it as deleted within a transactional boundary, ensuring data integrity.
+     * @param {DeletePostCommand} cmd The command object specifying the post to delete and necessary details.
+     * @returns {Promise<Result>} A Promise that resolves to a Result object indicating success or failure of the operation.
+     * @throws {PostNotFoundError} Thrown when the specified post cannot be found in the repository.
      */
     public async handle(cmd: DeletePostCommand): Promise<Result> {
-        let events = await this.unitOfWork.repository.loadEvents(cmd.postId);
+        let events = await this.postRepository.loadEvents(cmd.postId);
 
-        if (events.length === 0) {
-            return DeletePostErrors.postNotFound(cmd.postId);
-        }
+        if (events.length === 0) return DeletePostErrors.postNotFound(cmd.postId);
 
         let post = new Post(events);
+
         post.delete(new SellerId(cmd.sellerId));
-        this.unitOfWork.save(post);
-        this.unitOfWork.commit();
+
+        await this.postRepository.save(post);
+
+        this.messageBus.enqueue(post.popEvents());
 
         return Result.success();
     }
 }
 
 /**
- * Encapsulates error handling strategies for post deletion operations, offering a centralized
- * mechanism for generating and returning error results specific to post deletion contexts.
+ * Provides utility methods for generating standardized error responses for the post deletion process.
+ * This class encapsulates specific error scenarios that can occur during the deletion of a post, offering
+ * a consistent error handling mechanism.
  */
 class DeletePostErrors {
     /**
-     * Generates a `Result` object indicating a failure to find the post with the specified ID.
-     * This method facilitates a uniform approach to handling the scenario where a deletion operation
-     * cannot proceed due to the target post not being found in the database.
-     *
-     * @public
-     * @static
-     * @param {string} postId - The identifier of the post that was not found.
-     * @returns {Result} - A failure result encapsulating the error message.
+     * Generates an error Result object for scenarios where a post cannot be found by its ID during deletion.
+     * @param {string} postId The ID of the post that was not found.
+     * @returns {Result} A Result object encapsulating the error with a descriptive message.
      */
     public static postNotFound(postId: string): Result {
         return Result.failure(`Post with id '${postId}' was not found.`);

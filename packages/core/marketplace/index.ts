@@ -8,7 +8,6 @@ import CreatePostReadModelHandler from "./application/CreatePost/CreatePostReadM
 import PostModeratedHandler from "./application/UpdatePost/PostModeratedHandler";
 import DeletePostReadModelHandler from "./application/DeletePost/DeletePostReadModelHandler";
 import AbstractMessageBus from "../shared/application/AbstractMessageBus";
-import UnitOfWork from "../shared/application/UnitOfWork";
 import SBPostRepository from "./infrastructure/persistence/SBPostRepository";
 import SBPostReadModel from "./infrastructure/persistence/SBPostReadModelStore";
 import SBLocationRepository from "./infrastructure/persistence/SBLocationRepository";
@@ -60,19 +59,19 @@ export default function initialize(bus: AbstractMessageBus, config: any): void {
     const categoryRepository = new SBCategoryRepository(config.db.supabaseUrl, config.db.supabaseKey);
     const postModels = getPostReadStore(config);
     const moderationApi = new BadWordsModeration(config.moderation.replaceWith);
-    const unitOfWork = new UnitOfWork(postRepository);
     const postComments = new SBPostCommentsModelStore(config.db.supabaseUrl, config.db.supabaseKey);
 
     // Command registration
     
     bus.registerCommand(CreatePostCommand.name, new CreatePostHandler(
-        unitOfWork, 
+        postRepository, 
         moderationApi, 
         locationRepository,
         categoryRepository,
+        bus,
     ));
 
-    bus.registerCommand(DeletePostCommand.name, new DeletePostHandler(unitOfWork));
+    bus.registerCommand(DeletePostCommand.name, new DeletePostHandler(postRepository, bus));
     bus.registerCommand(ClosePostCommand.name, new ClosePostHandler(postRepository, bus));
     bus.registerCommand(AddCommentCommand.name, new AddCommentHandler(postRepository, bus));
 
@@ -83,7 +82,6 @@ export default function initialize(bus: AbstractMessageBus, config: any): void {
     bus.registerEvent(PostClosedEvent.name, new PostClosedHandler(postModels));
     bus.registerEvent(CommentAddedToPostEvent.name, new AddCommentToReadModelHandler(postComments))
 }
-
 
 
 /**

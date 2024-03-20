@@ -3,7 +3,6 @@ import Command from "../application/Command";
 import CommandHandler from "../application/CommandHandler";
 import DomainEventHandler from "../application/DomainEventHandler";
 import AbstractMessageBus from "../application/AbstractMessageBus";
-import ChangeTracker from "../application/ChangeTracker";
 import Result from "../application/Result";
 
 /**
@@ -192,9 +191,7 @@ export default class MessageBus implements AbstractMessageBus {
      * @returns {DomainEvent[]} The list of new and enqueued events.
      */
     private getNewEvents(): DomainEvent[] {
-        let newEvents = ChangeTracker.getNewEvents();
-        newEvents = newEvents.concat(this.popEnqueuedEvents());
-        return newEvents;
+        return this.popEnqueuedEvents();
     }
 
     /**

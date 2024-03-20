@@ -1,72 +1,83 @@
 import CreatePostCommand from "./CreatePostCommand";
 import ModerationAPI from "../../domain/ModerationAPI";
 import CommandHandler from "../../../shared/application/CommandHandler";
-import UnitOfWork from "../../../shared/application/UnitOfWork";
 import Post from "../../domain/Entities/Post/Post";
 import LocationRepository from "../../domain/Repositories/LocationRepository";
 import Result from "../../../shared/application/Result";
 import CategoryRepository from "../../domain/Repositories/CategoryRepository";
+import PostRepository from "../../domain/Repositories/PostRepository";
+import AbstractMessageBus from "../../../shared/application/AbstractMessageBus";
 
 /**
- * Command handler for processing the CreatePostCommand and creating a new post.
- * It extends the base CommandHandler class.
+ * Handles the creation of new posts in response to CreatePostCommands.
+ * Extends CommandHandler to process specific commands related to post creation,
+ * leveraging various repositories and APIs for data access and business logic execution.
+ * @extends {CommandHandler}
  */
 export default class CreatePostHandler extends CommandHandler {
     /**
-     * The unit of work for managing transactions.
+     * Repository for managing persistence operations for posts.
      * @private
-     * @type {UnitOfWork}
+     * @type {PostRepository}
      */
-    private unitOfWork: UnitOfWork;
+    private postRepository: PostRepository;
 
     /**
-     * The Moderation API for handling post moderation.
+     * The Moderation API for handling post moderation, ensuring that posts meet community and platform standards.
      * @private
      * @type {ModerationAPI}
      */
     private moderationApi: ModerationAPI;
 
     /**
-     * Repository for fetching location entities.
-     *
+     * Repository for fetching location entities, used to validate and associate posts with specific locations.
      * @private
      * @type {LocationRepository}
      */
     private locationRepository: LocationRepository;
 
     /**
-     * Repository for fetching category entities.
-     *
+     * Repository for fetching category entities, used to categorize posts for easier discovery and organization.
      * @private
      * @type {CategoryRepository}
      */
     private categoryRepository: CategoryRepository;
 
     /**
-     * Creates an instance of the CreatePostHandler class.
-     * @param {UnitOfWork} unitOfWork - The unit of work for managing transactions.
-     * @param {ModerationAPI} moderationApi - The Moderation API for handling post moderation.
-     * @param {LocationRepository} locationRepository - Repository for fetching location entities.
-     * @param {CategoryRepository} categoryRepository - Repository for fetching category entities.
+     * The message bus for handling domain events, facilitating loose coupling between components by using events.
+     * @private
+     * @type {AbstractMessageBus}
+     */
+    private messageBus: AbstractMessageBus;
+
+    /**
+     * Initializes a new instance of the CreatePostHandler with necessary repositories and APIs.
+     * @param {PostRepository} postRepository The repository for post data operations.
+     * @param {ModerationAPI} moderationApi The API for post moderation.
+     * @param {LocationRepository} locationRepository The repository for location data operations.
+     * @param {CategoryRepository} categoryRepository The repository for category data operations.
+     * @param {AbstractMessageBus} messageBus The system's message bus for event handling.
      */
     constructor(
-        unitOfWork: UnitOfWork, 
+        postRepository: PostRepository, 
         moderationApi: ModerationAPI,
         locationRepository: LocationRepository,
         categoryRepository: CategoryRepository,
+        messageBus: AbstractMessageBus,
     ) {
         super();
-        this.unitOfWork = unitOfWork;
+        this.postRepository = postRepository;
         this.moderationApi = moderationApi;
         this.locationRepository = locationRepository;
         this.categoryRepository = categoryRepository;
+        this.messageBus = messageBus
     }
 
     /**
-     * Handles the CreatePostCommand by creating a new post entity.
-     * If the post with the specified ID already exists, the command is ignored.
-     * @param {CreatePostCommand} cmd - The CreatePostCommand to be handled.
-     * @returns {Promise<Result>} - A Promise that resolves when the handling is complete.
+     * Processes the CreatePostCommand to create and persist a new post, subject to validation and moderation.
+     * Ensures uniqueness of the post ID, and validates location and category before creating the post.
+     * @param {CreatePostCommand} cmd The command containing data for creating a new post.
+     * @returns {Promise<Result>} A Promise resolving to a Result indicating success or failure of post creation.
      */
     public async handle(cmd: CreatePostCommand): Promise<Result> {
         let locId = cmd.locationId;
@@ -86,7 +97,7 @@ export default class CreatePostHandler extends CommandHandler {
             return CreatePostErrors.categoryNotFound(catId);
         }
 
-        let existingPostEvents = await this.unitOfWork.repository.loadEvents(postId);
+        let existingPostEvents = await this.postRepository.loadEvents(postId);
 
         if (existingPostEvents.length != 0) {
             return CreatePostErrors.invalidPost(`Post with id '${postId}' already exists.`)
@@ -102,20 +113,18 @@ export default class CreatePostHandler extends CommandHandler {
 
         post.moderate(this.moderationApi);
 
-        await this.unitOfWork.save(post);
+        await this.postRepository.save(post);
         
-        this.unitOfWork.commit();
-        
+        this.messageBus.enqueue(post.popEvents());
+
         return Result.success()
     }
 
-
     /**
-     * Create the post using the fields from the command.
-     *
+     * Constructs a Post entity from the provided CreatePostCommand, encapsulating the logic for post creation.
      * @private
-     * @param {CreatePostCommand} cmd
-     * @returns {Post}
+     * @param {CreatePostCommand} cmd The command containing the necessary data to create a post.
+     * @returns {Post} The newly created Post entity.
      */
     private createPost(cmd: CreatePostCommand): Post {
         return Post.create(
@@ -131,51 +140,32 @@ export default class CreatePostHandler extends CommandHandler {
     }
 }
 
-
 /**
- * Provides static methods for generating error results related to post creation failures.
- * This class is used to encapsulate specific error scenarios that can occur during the
- * post creation process, such as location not found or invalid post data.
- *
- * @class CreatePostErrors
- * @typedef {CreatePostErrors}
+ * Dedicated error class for encapsulating and managing specific post creation error scenarios.
  */
 class CreatePostErrors {
     /**
-     * Generates a Result object indicating failure due to the specified location ID not being found.
-     * This method is typically called when an attempt to create a post with a non-existent location ID is made.
-     *
-     * @public
-     * @static
-     * @param {string} locationId The ID of the location that was not found.
-     * @returns {Result} A Result object containing the failure message related to the missing location.
+     * Error when the specified location ID does not exist in the system.
+     * @param {string} locationId The ID of the missing location.
+     * @returns {Result} A Result object indicating the error with a descriptive message.
      */
     public static locationNotFound(locationId: string): Result {
         return Result.failure(`Location with id '${locationId}' was not found.`);
     }
 
     /**
-     * Generates a Result object indicating failure due to the specified category ID not being found.
-     * This method is typically called when an attempt to create a post with a non-existent category ID is made.
-     *
-     * @public
-     * @static
-     * @param {string} categoryId
-     * @returns {Result}
+     * Error when the specified category ID does not exist in the system.
+     * @param {string} categoryId The ID of the missing category.
+     * @returns {Result} A Result object indicating the error with a descriptive message.
      */
     public static categoryNotFound(categoryId: string): Result {
         return Result.failure(`Category with id '${categoryId}' was not found.`);
     }
 
     /**
-     * Generates a Result object indicating failure due to invalid post data.
-     * This method is used to encapsulate various validation failures that might occur
-     * during the post creation process, allowing for a consistent error handling mechanism.
-     *
-     * @public
-     * @static
-     * @param {string} error A descriptive error message detailing why the post data is considered invalid.
-     * @returns {Result} A Result object containing the failure message related to the post data validation.
+     * Error when post data is invalid, covering various validation failures.
+     * @param {string} error Descriptive message detailing the invalid post data issue.
+     * @returns {Result} A Result object indicating the error with the provided message.
      */
     public static invalidPost(error: string): Result {
         return Result.failure(error);
