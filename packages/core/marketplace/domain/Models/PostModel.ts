@@ -58,6 +58,11 @@ export default class PostModel {
     public createdAt: string;
 
     /**
+     * @type {string} - The timestamp when the post expires.
+     */
+    public expiresAt: string;
+
+    /**
      * Creates an instance of the PostModel.
      * @param {string} id - The unique identifier of the post.
      * @param {string} title - The title of the post.
@@ -70,6 +75,7 @@ export default class PostModel {
      * @param {boolean} isClosed - Flag indictating if the post was closed.
      * @param {boolean} isModerated - Flag indictating if the post was moderated.
      * @param {string} createdAt - The timestamp when the post was created.
+     * @param {string} expiresAt - The timestamp when the post expires.
      */
     constructor(
         id: string,
@@ -83,6 +89,7 @@ export default class PostModel {
         isModerated: boolean,
         isClosed: boolean,
         createdAt: string,
+        expiresAt: string,
     ) {
         this.id = id;
         this.title = title;
@@ -95,5 +102,6 @@ export default class PostModel {
         this.isModerated = isModerated;
         this.isClosed = isClosed;
         this.createdAt = createdAt;
+        this.expiresAt = expiresAt;
     }
 }

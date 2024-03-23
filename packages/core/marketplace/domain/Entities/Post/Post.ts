@@ -6,6 +6,7 @@ import DomainEvent from "../../../../shared/domain/DomainEvent";
 import { AggregateRoot } from "../../../../shared/domain/Entity";
 import { LocationId } from "../Location/Values";
 import PostComment from "../PostComment/PostComment";
+import { PostEffectiveRange } from "./Values";
 
 /**
  * Represents the state of a Post aggregate within the domain, encapsulating all properties and state transitions through domain events.
@@ -66,6 +67,8 @@ class PostState {
         public price?: values.PostPrice,
         public sellerId?: values.SellerId,
         public categoryId?: values.PostCategoryId,
+        public effectiveRange?: PostEffectiveRange,
+
     ) {
         this.isDeleted = false;
         this.isModerated = false;
@@ -105,6 +108,7 @@ class PostState {
         this.sellerId = new values.SellerId(event.sellerId);
         this.categoryId = new values.PostCategoryId(event.categoryId);
         this.locationId = new LocationId(event.locationId);
+        this.effectiveRange = event.effectiveRange;
         this.isModerated = false;
         this.isDeleted = false;
         this.isClosed = false;
@@ -264,8 +268,19 @@ export default class Post extends AggregateRoot {
      * @param {string} photoUrl - The URL of the post's photo.
      * @returns {Post} - The newly created Post instance.
      */
-    public static create(id: string, title: string, description: string, price: string, location: string, sellerId: string, categoryId: string, photoUrl: string): Post {
+    public static create(
+        id: string,
+        title: string,
+        description: string,
+        price: string,
+        location: string,
+        sellerId: string,
+        categoryId: string,
+        photoUrl: string
+    ): Post {
         let post = new Post();
+
+        const effectiveRange = PostEffectiveRange.expiresIn(30);
         
         let event = new events.PostCreatedEvent(
             id,
@@ -275,7 +290,8 @@ export default class Post extends AggregateRoot {
             location,
             sellerId,
             categoryId,
-            photoUrl
+            photoUrl,
+            effectiveRange,
         );
 
         post.addEvent(event);

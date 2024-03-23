@@ -26,6 +26,7 @@ export default class SBPostReadModel extends SupabaseClient implements PostReadM
         await supabase.from('posts_projection').insert({
             uuid: post.id,
             created_at: post.createdAt,
+            expires_at: post.expiresAt,
             title: post.title,
             description: post.description,
             category_id: post.categoryId,
@@ -77,6 +78,7 @@ export default class SBPostReadModel extends SupabaseClient implements PostReadM
                 data.is_moderated,
                 data.is_closed,
                 data.created_at,
+                data.expiresAt
             );
         }
 
@@ -104,6 +106,7 @@ export default class SBPostReadModel extends SupabaseClient implements PostReadM
             is_moderated: post.isModerated,
             is_closed: post.isClosed,
             created_at: post.createdAt,
+            expires_at: post.expiresAt,
         };
 
         await supabase.from('posts_projection')

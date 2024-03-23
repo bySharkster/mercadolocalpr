@@ -116,3 +116,83 @@ export class SellerId extends values.Id {
         return this.id === other.id;
     }
 }
+
+
+/**
+ * Represents the effective and expiration dates for a post, ensuring the post is associated with a valid time range.
+ * Inherits from a value object base class to provide common functionality for value equality.
+ *
+ * @class PostEffectiveRange
+ * @typedef {PostEffectiveRange}
+ * @extends {values.ValueObject}
+ */
+export class PostEffectiveRange extends values.ValueObject {
+    
+    /**
+     * The date when the post becomes effective and starts being relevant.
+     * Once set, it cannot be modified.
+     *
+     * @public
+     * @readonly
+     * @type {Date}
+     */
+    public readonly effectiveDate: Date;
+    
+    /**
+     * The expiration date after which the post is considered outdated or no longer relevant.
+     * Once set, it cannot be modified.
+     *
+     * @public
+     * @readonly
+     * @type {Date}
+     */
+    public readonly expirationDate: Date;
+
+    /**
+     * Creates an instance of PostEffectiveRange with specified effective and expiration dates.
+     *
+     * @constructor
+     * @param {Date} effectiveDate The date from which the post is considered active.
+     * @param {Date} expirationDate The date after which the post is considered expired.
+     */
+    constructor(effectiveDate: Date, expirationDate: Date) {
+        super();
+        this.effectiveDate = effectiveDate;
+        this.expirationDate = expirationDate;
+    }
+
+    /**
+     * Creates a PostEffectiveRange object that expires after a specified number of days from the current date.
+     * Useful for creating posts with a defined active duration.
+     *
+     * @public
+     * @static
+     * @param {number} numDays The number of days after which the post should expire.
+     * @returns {PostEffectiveRange} A new instance of PostEffectiveRange with calculated effective and expiration dates.
+     */
+    public static expiresIn(numDays: number): PostEffectiveRange  {
+        const effective = new Date();
+        const expiration = new Date();
+
+        expiration.setDate(effective.getDate() + numDays);
+
+        return new PostEffectiveRange(effective, expiration);
+    }
+
+    /**
+     * Creates a PostEffectiveRange object from string representations of the effective and expiration dates.
+     * This is particularly useful when dealing with date inputs in string format, such as from user input or external data sources.
+     *
+     * @public
+     * @static
+     * @param {string} effectiveDate A string representation of the effective date.
+     * @param {string} expirationDate A string representation of the expiration date.
+     * @returns {PostEffectiveRange} A new instance of PostEffectiveRange with parsed effective and expiration dates.
+     */
+    public static fromString(effectiveDate: string, expirationDate: string): PostEffectiveRange {
+        const effective = new Date(effectiveDate);
+        const expiration = new Date(expirationDate);
+        
+        return new PostEffectiveRange(effective, expiration);
+    }
+}

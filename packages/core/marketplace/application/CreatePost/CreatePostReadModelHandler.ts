@@ -34,7 +34,8 @@ export default class CreatePostReadModelHandler extends DomainEventHandler {
             evt.photoUrl,
             true,  // moderated
             false, // not closed
-            evt.timestamp
+            evt.effectiveRange.effectiveDate.toDateString(),
+            evt.effectiveRange.expirationDate.toISOString()
         );
 
         // Add the new post read model to the store

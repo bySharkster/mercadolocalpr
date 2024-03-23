@@ -1,4 +1,5 @@
 import DomainEvent from "../../shared/domain/DomainEvent";
+import { PostEffectiveRange } from "./Entities/Post/Values";
 
 /**
  * Domain event representing the creation of a new post.
@@ -46,6 +47,11 @@ export class PostCreatedEvent extends DomainEvent {
     public readonly photoUrl: string;
 
     /**
+     * @type {PostEffectiveRange} - The date range the post is in effect.
+     */
+    public readonly effectiveRange: PostEffectiveRange;
+
+    /**
      * Creates an instance of the PostCreatedEvent.
      * @param {string} id - The unique identifier of the created post.
      * @param {string} title - The title of the post.
@@ -55,9 +61,21 @@ export class PostCreatedEvent extends DomainEvent {
      * @param {string} sellerId - The unique identifier of the user who created the post.
      * @param {string} categoryId - The category id of the post.
      * @param {string} photoUrl - The URL of the photo associated with the post.
+     * @param {PostEffectiveRange} effectiveRange - The date range the post is in effect.
      * @param {string} timestamp - The timestamp of the event.
      */
-    constructor(id: string, title: string, description: string, price: string, locationId: string, sellerId: string, categoryId: string, photoUrl: string, timestamp?: string) {
+    constructor(
+        id: string, 
+        title: string, 
+        description: string, 
+        price: string, 
+        locationId: string, 
+        sellerId: string,
+        categoryId: string,
+        photoUrl: string,
+        effectiveRange: PostEffectiveRange,
+        timestamp?: string,
+    ) {
         super(timestamp);
         this.id = id;
         this.title = title;
@@ -67,6 +85,7 @@ export class PostCreatedEvent extends DomainEvent {
         this.sellerId = sellerId;
         this.categoryId = categoryId;
         this.photoUrl = photoUrl;
+        this.effectiveRange = effectiveRange;
     }
 
     /**
@@ -83,6 +102,8 @@ export class PostCreatedEvent extends DomainEvent {
             sellerId: this.sellerId,
             categoryId: this.categoryId,
             photoUrl: this.photoUrl,
+            effective: this.effectiveRange.effectiveDate.toISOString(),
+            expiration: this.effectiveRange.expirationDate.toISOString(),
         });
     }
 
@@ -103,6 +124,7 @@ export class PostCreatedEvent extends DomainEvent {
             data.sellerId,
             data.categoryId,
             data.photoUrl,
+            PostEffectiveRange.fromString(data.effective, data.expiration),
             obj.timestamp,
         );
     }
