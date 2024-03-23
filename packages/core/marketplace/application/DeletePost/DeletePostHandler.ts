@@ -44,7 +44,6 @@ export class DeletePostHandler extends CommandHandler {
      * of the post and marks it as deleted within a transactional boundary, ensuring data integrity.
      * @param {DeletePostCommand} cmd The command object specifying the post to delete and necessary details.
      * @returns {Promise<Result>} A Promise that resolves to a Result object indicating success or failure of the operation.
-     * @throws {PostNotFoundError} Thrown when the specified post cannot be found in the repository.
      */
     public async handle(cmd: DeletePostCommand): Promise<Result> {
         let events = await this.postRepository.loadEvents(cmd.postId);
