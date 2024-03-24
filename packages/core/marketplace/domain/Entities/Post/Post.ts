@@ -92,6 +92,8 @@ class PostState {
             this.applyPostClosedEvent(event);
         else if (event instanceof events.CommentAddedToPostEvent)
             this.applyCommentAddedToPostEvent(event);
+        else if (event instanceof events.PriceReducedEvent)
+            this.applyPriceReducedEvent(event);
         else
             throw new Error(`Unhandled event '${event.constructor.name}'`);
     }
@@ -159,6 +161,16 @@ class PostState {
             event.commentorId,
             event.comment,
         ));
+    }
+
+    /**
+     * Assign a new price in response to a PriceReducedEvent.
+     *
+     * @private
+     * @param {events.PriceReducedEvent} event - The event indicating that the price of a post was reduced.
+     */
+    private applyPriceReducedEvent(event: events.PriceReducedEvent) {
+        this.price = event.newPrice;
     }
 
     /**
@@ -380,5 +392,31 @@ export default class Post extends AggregateRoot {
                 isSeller
             ));
         }
+    }
+    
+    /**
+     * Reduce the price of the post.
+     *
+     * @public
+     * @param {values.PostPrice} newPrice - The new price of the post.
+     * @param {values.SellerId} sellerId - The identifier of the seller initiating the reduce action.
+     */
+    public reducePrice(newPrice: values.PostPrice, sellerId: values.SellerId): void {
+        if(this.isClosed || this.isDeleted) {
+            throw new Error("Cannot reduce the price of a closed/deleted post.");
+        }
+
+        if(!this.isOwnedBy(sellerId)) {
+            throw new Error(`Post with id '${this.getId()}' is not owned by '${sellerId.id}'`);
+        }
+
+        if(!newPrice.isReducedFrom(this.state.price!)) {
+            const _new = newPrice.price;
+            const _old = this.state.price!.price;
+
+            throw new Error(`New Price (${_new}) is not a reduction from current price (${_old}).`);
+        }
+
+        this.addEvent(new events.PriceReducedEvent(this.state.id!, newPrice));
     }
 }

@@ -92,6 +92,17 @@ export class PostPrice extends values.ValueObject {
             throw new Error(`Price '${price}' is not a valid price.`);
         }
     }
+    
+    /**
+     * Check if the current price is a reduction from the given price.
+     *
+     * @public
+     * @param {PostPrice} other
+     * @returns {boolean}
+     */
+    public isReducedFrom(other: PostPrice): boolean {
+        return this.price < other.price;
+    }
 }
 
 /**

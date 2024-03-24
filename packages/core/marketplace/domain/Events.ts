@@ -1,5 +1,5 @@
 import DomainEvent from "../../shared/domain/DomainEvent";
-import { PostEffectiveRange } from "./Entities/Post/Values";
+import { PostEffectiveRange, PostId, PostPrice } from "./Entities/Post/Values";
 
 /**
  * Domain event representing the creation of a new post.
@@ -367,6 +367,63 @@ export class CommentAddedToPostEvent extends DomainEvent {
             data.commentId,
             data.comment,
             data.isSeller,
+            obj.timestamp,
+        );
+    }
+}
+
+
+/**
+ * Represents an event indicating that the price of a post has been reduced.
+ * Inherits from DomainEvent to provide base event functionalities.
+ *
+ * @class PriceReducedEvent
+ * @extends {DomainEvent}
+ */
+export class PriceReducedEvent extends DomainEvent {
+    /**
+     * Initializes a new instance of the PriceReducedEvent class.
+     *
+     * @constructor
+     * @param {PostId} postId The ID of the post whose price has been reduced.
+     * @param {PostPrice} newPrice The new price of the post.
+     * @param {?string} [timestamp] The timestamp of when the event occurred, optional.
+     */
+    constructor(
+        public readonly postId: PostId,
+        public readonly newPrice: PostPrice, 
+        timestamp?: string,
+    ) {
+        super(timestamp);
+    }
+
+    /**
+     * Converts the PriceReducedEvent to a JSON string representation.
+     *
+     * @public
+     * @returns {string} The JSON string representation of the event.
+     */
+    public toJson(): string {
+        return JSON.stringify({
+            postId: this.postId.id,
+            newPrice: this.newPrice.price,
+        });
+    }
+
+    /**
+     * Constructs a PriceReducedEvent instance from a JSON string.
+     *
+     * @public
+     * @static
+     * @param {*} obj The JSON object containing event data.
+     * @returns {PriceReducedEvent} The reconstructed PriceReducedEvent instance.
+     */
+    public static fromJson(obj: any): PriceReducedEvent {
+        const data = JSON.parse(obj.data);
+
+        return new PriceReducedEvent(
+            new PostId(data.postId),
+            new PostPrice(data.newPrice),
             obj.timestamp,
         );
     }

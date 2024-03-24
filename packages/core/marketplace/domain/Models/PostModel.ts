@@ -23,6 +23,11 @@ export default class PostModel {
     public price: number;
 
     /**
+     * @type {number} - The previous price of the post.
+     */
+    public previousPrice: number | null;
+
+    /**
      * @type {string} - The location id of the post.
      */
     public locationId: string;
@@ -68,6 +73,7 @@ export default class PostModel {
      * @param {string} title - The title of the post.
      * @param {string} description - The description of the post.
      * @param {number} price - The price of the post.
+     * @param {number | null} previousPrice - The previous price of the post.
      * @param {string} locationId - The location id of the post.
      * @param {string} sellerId - The unique identifier of the user who created the post.
      * @param {string} categoryId - The category id of the post.
@@ -82,6 +88,7 @@ export default class PostModel {
         title: string,
         description: string,
         price: number,
+        previousPrice: number | null,
         locationId: string,
         sellerId: string,
         categoryId: string,
@@ -95,6 +102,7 @@ export default class PostModel {
         this.title = title;
         this.description = description;
         this.price = price;
+        this.previousPrice = previousPrice;
         this.locationId = locationId;
         this.sellerId = sellerId;
         this.categoryId = categoryId;

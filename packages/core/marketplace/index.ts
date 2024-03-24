@@ -3,7 +3,7 @@ import CreatePostCommand from "./application/CreatePost/CreatePostCommand";
 import DeletePostCommand from "./application/DeletePost/DeletePostCommand";
 import CreatePostHandler from "./application/CreatePost/CreatePostHandler";
 import { DeletePostHandler } from "./application/DeletePost/DeletePostHandler";
-import { CommentAddedToPostEvent, PostClosedEvent, PostCreatedEvent, PostDeletedEvent, PostModeratedEvent } from "./domain/Events";
+import { CommentAddedToPostEvent, PostClosedEvent, PostCreatedEvent, PostDeletedEvent, PostModeratedEvent, PriceReducedEvent } from "./domain/Events";
 import CreatePostReadModelHandler from "./application/CreatePost/CreatePostReadModelHandler";
 import PostModeratedHandler from "./application/UpdatePost/PostModeratedHandler";
 import DeletePostReadModelHandler from "./application/DeletePost/DeletePostReadModelHandler";
@@ -21,6 +21,9 @@ import AddCommentCommand from "./application/AddComment/AddCommentCommand";
 import AddCommentHandler from "./application/AddComment/AddCommentHandler";
 import AddCommentToReadModelHandler from "./application/AddComment/AddCommentToReadModelHandler";
 import SBPostCommentsModelStore from "./infrastructure/persistence/SBPostCommentsModelStore";
+import ReducePriceCommand from "./application/ReducePrice/ReducePriceCommand";
+import ReducePriceHandler from "./application/ReducePrice/ReducePriceHandler";
+import PriceReducedHandler from "./application/UpdatePost/PriceReducedHandler";
 
 
 /**
@@ -74,6 +77,7 @@ export default function initialize(bus: AbstractMessageBus, config: any): void {
     bus.registerCommand(DeletePostCommand.name, new DeletePostHandler(postRepository, bus));
     bus.registerCommand(ClosePostCommand.name, new ClosePostHandler(postRepository, bus));
     bus.registerCommand(AddCommentCommand.name, new AddCommentHandler(postRepository, bus));
+    bus.registerCommand(ReducePriceCommand.name, new ReducePriceHandler(postRepository, bus));
 
     // Event registration
     bus.registerEvent(PostCreatedEvent.name, new CreatePostReadModelHandler(postModels));
@@ -81,6 +85,7 @@ export default function initialize(bus: AbstractMessageBus, config: any): void {
     bus.registerEvent(PostDeletedEvent.name, new DeletePostReadModelHandler(postModels));
     bus.registerEvent(PostClosedEvent.name, new PostClosedHandler(postModels));
     bus.registerEvent(CommentAddedToPostEvent.name, new AddCommentToReadModelHandler(postComments))
+    bus.registerEvent(PriceReducedEvent.name, new PriceReducedHandler(postModels))
 }
 
 
