@@ -8,17 +8,51 @@ import { LocationId } from "../Location/Values";
 import PostComment from "../PostComment/PostComment";
 import { PostEffectiveRange } from "./Values";
 
+
+/**
+ * Represents the possible states a post can have.
+ *
+ * @class PostStatus
+ * @typedef {PostStatus}
+ */
+class PostStatus {
+    /**
+     * Indicates that the post is open and visible to users.
+     *
+     * @static
+     * @type {string}
+     */
+    static OPEN: string = 'open';
+
+    /**
+     * Indicates that the post is closed, possibly still visible but not active for new interactions.
+     *
+     * @static
+     * @type {string}
+     */
+    static CLOSED: string = 'closed';
+
+    /**
+     * Indicates that the post has been deleted and is likely not visible to users anymore.
+     *
+     * @static
+     * @type {string}
+     */
+    static DELETED: string = 'deleted';
+}
+
+
 /**
  * Represents the state of a Post aggregate within the domain, encapsulating all properties and state transitions through domain events.
  */
 class PostState {
     /**
-     * Indicates whether the post has been deleted.
+     * Represents the possible states a post can have.
      *
      * @public
-     * @type {boolean}
+     * @type {string}
      */
-    public isDeleted: boolean;
+    public status: string;
     
     /**
      * Indicates whether the post has undergone moderation.
@@ -27,14 +61,6 @@ class PostState {
      * @type {boolean}
      */
     public isModerated: boolean;
-
-    /**
-     * Indicates whether the post is closed.
-     *
-     * @public
-     * @type {boolean}
-     */
-    public isClosed: boolean;
 
     /**
      * The location ID associated with the post, if any.
@@ -70,9 +96,8 @@ class PostState {
         public effectiveRange?: PostEffectiveRange,
 
     ) {
-        this.isDeleted = false;
+        this.status = PostStatus.OPEN;
         this.isModerated = false;
-        this.isClosed = false;
         this.comments = [];
     }
 
@@ -112,8 +137,6 @@ class PostState {
         this.locationId = new LocationId(event.locationId);
         this.effectiveRange = event.effectiveRange;
         this.isModerated = false;
-        this.isDeleted = false;
-        this.isClosed = false;
     }
 
     /**
@@ -122,7 +145,7 @@ class PostState {
      * @param {events.PostDeletedEvent} event - The event to apply.
      */
     private applyPostDeletedEvent(event: events.PostDeletedEvent): void {
-        this.isDeleted = true;
+        this.status = PostStatus.DELETED;
     }
 
     /**
@@ -146,7 +169,7 @@ class PostState {
      * @param {events.PostClosedEvent} event - The event to apply.
      */
     private applyPostClosedEvent(event: events.PostClosedEvent) {
-        this.isClosed = true;
+        this.status = PostStatus.CLOSED;
     }
 
     /**
@@ -236,7 +259,7 @@ export default class Post extends AggregateRoot {
      * @returns {boolean} - True if the post is deleted, otherwise false.
      */
     public get isDeleted(): boolean {
-        return this.state.isDeleted;
+        return this.state.status == PostStatus.DELETED;
     }
 
     /**
@@ -245,7 +268,7 @@ export default class Post extends AggregateRoot {
      * @returns {boolean} - True if the post is deleted, otherwise false.
      */
     public get isClosed(): boolean {
-        return this.state.isClosed;
+        return this.state.status == PostStatus.CLOSED;
     }
 
     /**
